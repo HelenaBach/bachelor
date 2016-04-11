@@ -34,7 +34,7 @@ def init_image(path, file):
 # returns  : image as a numpy array
 def get_image(path, file):
 	# correct file extension
-	file_name = file[:-3] + '.jpg'
+	file_name = file[:-4] + '.jpg'
 	# read image as is (-1)
 	image = cv2.imread(path + file_name, -1)
 	return image
@@ -44,7 +44,7 @@ def get_image(path, file):
 # returns  : gray scaled image as a numpy array
 def get_grayscale(path, file):
 	# correct file extension
-	file_name = file[:-3] + '.jpg'
+	file_name = file[:-4] + '.jpg'
 	# read image in grayscale (0)
 	image = cv2.imread(path + file_name, 0)
 	return image
@@ -54,4 +54,4 @@ def get_grayscale(path, file):
 # returns  : binary image as a numpy array
 def get_segmented_image():
 	# should we call otsu every time or store the segmented image?
-	return  
+	return
