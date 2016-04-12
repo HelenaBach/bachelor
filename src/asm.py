@@ -119,12 +119,12 @@ def c2(shape1, shape2, var_matrix):
         summ += weight * (x1x2 - y1y2)
     return summ
 
-# Aligning a pair of shapes by solving Ax=b
+# Solve Ax=b (30)
 # arguments: shape1 the shape to align according to
 #            shape2 the shape to be aligned
 #            V_R_kl matirx
-# returns: the new aligned points (landmarks) of shape2
-def align_pair(shape1, shape2, var_matrix):
+# returns: the vector x = a_x, a_y, t_x, t_y
+def solve_x(shape1, shape2, var_matrix):
     # Fill the big matrix A of (30)
     A = np.zeros(4,4)
     # diagonal X_2
@@ -152,3 +152,5 @@ def align_pair(shape1, shape2, var_matrix):
     x = np.linalg.solve(A,b)
 
     return x
+
+def align_pair()
