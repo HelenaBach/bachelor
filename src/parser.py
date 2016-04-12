@@ -1,4 +1,4 @@
-# Parse data from leafscan 
+# Parse data from leafscan
 import xml.etree.ElementTree as etree
 import os
 from shutil import copy
@@ -10,18 +10,18 @@ import cv2
 ## returns: the image dict
 def init_image(path, file):
 	# correct file extension
-	file_name = file[:-3] + '.xml'
+	file_name = file[:-4] + '.xml'
 
 	img_struct = {}
 	tree = etree.parse(path + file_name)
 	root = tree.getroot()
 
-	# create image fields 
+	# create image fields
 	media_id       = root.find('MediaId').text
 	class_id       = root.find('ClassId').text
 	landmarks      = np.array([]) # <- skal der mon være en tom liste her?
 	feature_vector = np.array([])
-	# instantiate image fields 
+	# instantiate image fields
 	img_struct['media_id']       = media_id
 	img_struct['class_id']       = class_id
 	img_struct['landmarks']      = landmarks
