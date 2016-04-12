@@ -20,10 +20,6 @@ def landmark_setter(image, gray_image):
 	# need to invert the image to use findContours
 	image = np.invert(image)
 
-	#cv2.imshow('img', image)
-	#cv2.waitKey(0)
-	#cv2.destroyAllWindows()
-
 	# get the contour of the leaf
 	img, contours, hierarchy = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 	#^^             ^^ bruger ikke                      ^ for hirachy - CHAIN_APPROX_SIMPLE to let two points represent lines
@@ -31,24 +27,6 @@ def landmark_setter(image, gray_image):
 	# each contour is a Numpy array of (x,y) coordinates of boundary points of the leaf.
 	# expect only one contour - the leaf - should be the biggest if more contours is found
 	contour = contours[0]
-
-	#cv2.drawContours(gray_image, [contour[:400]], -1, (0,255,0), 3)
-	#cv2.imshow('img', gray_image)
-	#cv2.waitKey(0)
-	#cv2.destroyAllWindows()
-	#cv2.drawContours(gray_image, [contour[:800]], -1, (0,255,0), 3)
-	#cv2.imshow('img', gray_image)
-	#cv2.waitKey(0)
-	#cv2.destroyAllWindows()
-	#cv2.drawContours(gray_image, [contour[:1200]], -1, (0,255,0), 3)
-	#cv2.imshow('img', gray_image)
-	#cv2.waitKey(0)
-	#cv2.destroyAllWindows()
-	#cv2.drawContours(gray_image, [contour[:1600]], -1, (0,255,0), 3)
-	#cv2.imshow('img', gray_image)
-	#cv2.waitKey(0)
-	#cv2.destroyAllWindows()
-
 	
 	# want to uniformly place 100 point along the contour
 	pix_pr_landmark = math.floor(len(contour) / 100)
@@ -64,15 +42,3 @@ def landmark_setter(image, gray_image):
 	# make sure that only 100 landmarks are chosen. x and y for each point -> 200 elements
 	landmarks = landmarks[:200]
 	return landmarks
-
-import parser
-image = parser.get_grayscale('../data/leafscan_selection/', '100261.jpg')
-bin_im = otsu(image)
-#cv2.imshow('img', bin_im)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-#bin_im2 = np.invert(bin_im)
-#cv2.imshow('img', bin_im2)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
-landmark_setter(bin_im, image)
