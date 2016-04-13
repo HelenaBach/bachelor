@@ -37,6 +37,8 @@ def get_image(path, file):
 	file_name = file[:-4] + '.jpg'
 	# read image as is (-1)
 	image = cv2.imread(path + file_name, -1)
+	if image == None:
+		print('no image found')
 	return image
 
 # get gray scaled image as a numpy array
