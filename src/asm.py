@@ -212,7 +212,7 @@ def normalize_mean(shape1, mean_shape, var_matrix):
     return norm_mean
 
 # Checks if the aligning converges
-def converges()
+#def converges()
 
 # The align algorithm of Cootes
 def the_real_aligner():
@@ -220,8 +220,8 @@ def the_real_aligner():
     shape1 = image_table[0]['landmarks']
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
-#    while not converges:
-for i in range(100):
+    #while not converges:
+    for i in range(100): # hack until we have made the converges function.
         mean_shape = mean_shape()
         new_mean = normalize_mean(shape1, mean_shape, var_matrix)
         align_all_shapes(new_mean)
