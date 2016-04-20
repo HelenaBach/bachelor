@@ -10,8 +10,10 @@ import cv2
 ## returns: the image dict
 def init_image(path, file):
 	# correct file extension
-	#file_name = file[:-4] + '.xml'
-	file_name = file
+	file_name = file + '.xml'
+	if file[-4:-3] == '.'
+		file_name = file[:-4] + '.xml'
+	
 
 	img_struct = {}
 	tree = etree.parse(path + file_name)
@@ -35,7 +37,10 @@ def init_image(path, file):
 # returns  : image as a numpy array
 def get_image(path, file):
 	# correct file extension
-	file_name = file[:-4] + '.jpg'
+	file_name = file + '.jpg'
+	if file[-4:-3] == '.'
+		file_name = file[:-4] + '.jpg'
+
 	# read image as is (-1)
 	image = cv2.imread(path + file_name, -1)
 	if image == None:
@@ -47,7 +52,10 @@ def get_image(path, file):
 # returns  : gray scaled image as a numpy array
 def get_grayscale(path, file):
 	# correct file extension
-	file_name = file[:-4] + '.jpg'
+	file_name = file + '.jpg'
+	if file[-4:-3] == '.'
+		file_name = file[:-4] + '.jpg'
+		
 	# read image in grayscale (0)
 	image = cv2.imread(path + file_name, 0)
 	return image

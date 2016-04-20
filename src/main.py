@@ -1,20 +1,29 @@
-import segmentation
 import os
 import cv2
+import segmentation
+import parser
+from table import image_table
 
 path = '../data/leafscan/'
 images = os.listdir(path)[:100]
-img_4_landmarks = []
 
 for image in images:
-	if image.endswith('.jpg'):
-	    # indlæs billedet i greyscale (det er det 0 betyder)
-	    img = cv2.imread('../data/leafscan/' + image,0)
-	    # gør Otsu agtige ting
-	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU) #Ved ikke lige hvad det ægte foregår her
-	    img_4_landmarks.append((thr, img))
+	if image.endswith('.xml'):
+		im_struct = parser.init_image(path, image)
 
-for thr, img in img_4_landmarks:
-	landmarks = segmentation.landmark_setter(thr, img)
+		image_table.append(im_struct)
+
+for im_struct in image_table:
+    # get image as grayscale
+    img = parser.get_grayscale(path, im_struct['media_id'])
+    # gør Otsu agtige ting
+    binary = segmentation.otsu(img)
+	
+	# get landmarks
+	landmarks = segmentation.landmark_setter(binary, img)
+	# update the image table
+	im_struct['landmarks'] = landmarks
+
+
 
 
