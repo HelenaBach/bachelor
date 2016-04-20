@@ -188,7 +188,6 @@ def align_all_shapes(mean_shape):
     return var_matrix
 
 # Calculate the mean shape from the aligned shapes
-# argument: the image table with all image dicts
 # returns: the mean shaoe
 def mean_shape():
     shape_stack = image_table[0]['landmarks']
@@ -203,17 +202,26 @@ def mean_shape():
 
     return mean_shape
 
+# Normalize the meanshape arcording to the first shape in the set
+#  - this is the 'easy' solution. One could some other normalizing default
+# arguments: the first shape in the set, the current meanshape, and the V_R_kl matrix
+# returns: the normalized meanshape.
 def normalize_mean(shape1, mean_shape, var_matrix):
     x = solve_x(shape1, mean_shape, var_matrix)
     norm_mean = align_pair(mean_shape, x)
     return norm_mean
 
+# Checks if the aligning converges
+def converges()
+
+# The align algorithm of Cootes
 def the_real_aligner():
     # the first shape is saved to be used for normalizing mean
     shape1 = image_table[0]['landmarks']
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
-    while not converges: # JA det er lort!
+#    while not converges:
+for i in range(100):
         mean_shape = mean_shape()
         new_mean = normalize_mean(shape1, mean_shape, var_matrix)
         align_all_shapes(new_mean)
