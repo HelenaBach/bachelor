@@ -10,7 +10,8 @@ import cv2
 ## returns: the image dict
 def init_image(path, file):
 	# correct file extension
-	file_name = file[:-4] + '.xml'
+	#file_name = file[:-4] + '.xml'
+	file_name = file
 
 	img_struct = {}
 	tree = etree.parse(path + file_name)
@@ -54,6 +55,11 @@ def get_grayscale(path, file):
 # get segmentated image as a numpy array
 # arguments: the relative path to file directory, file
 # returns  : binary image as a numpy array
-def get_segmented_image():
+def get_binary(path, file):
 	# should we call otsu every time or store the segmented image?
+	if image.endswith('.jpg'):
+	    # indlæs billedet i greyscale (det er det 0 betyder)
+	    img = cv2.imread('../data/leafscan/' + file,0)
+	    # gør Otsu agtige ting
+	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU)
 	return
