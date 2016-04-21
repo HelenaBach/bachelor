@@ -73,8 +73,8 @@ def get_binary(path, file):
 	    # indlæs billedet i greyscale (det er det 0 betyder)
 	    img = cv2.imread(path + file,0)
 	    if img == None:
-			print('no image found')
-			sys.exit(3)
+	    	print('no image found')
+	    	sys.exit(3)
 	    # gør Otsu agtige ting
 	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU)
 	return
