@@ -148,6 +148,7 @@ def solve_x(shape1, shape2, var_matrix):
     b[2] = c1(shape1, shape2, var_matrix)
     # C_2
     b[3] = c2(shape1, shape2, var_matrix)
+    b = np.transpose(b)
     # solve for x = a_x, a_y, t_x, t_y)
     x = np.linalg.solve(A,b)
     print(A)
