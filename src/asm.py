@@ -148,6 +148,7 @@ def solve_x(shape1, shape2, var_matrix):
     b[2] = c1(shape1, shape2, var_matrix)
     # C_2
     b[3] = c2(shape1, shape2, var_matrix)
+    b = np.transpose(b)
     # solve for x = a_x, a_y, t_x, t_y)
     x = np.linalg.solve(A,b)
     print(A)
@@ -225,7 +226,7 @@ def normalize_mean(shape1, mean_shape, var_matrix):
 # The align algorithm of Cootes
 def the_real_aligner():
     # the first shape is saved to be used for normalizing mean
-    shape1 = image_table[0]['landmarks']
+    shape1 = np.copy(image_table[0]['landmarks'])
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
     #while not converges:
