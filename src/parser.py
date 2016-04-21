@@ -11,9 +11,9 @@ import cv2
 def init_image(path, file):
 	# correct file extension
 	file_name = file + '.xml'
-	if file[-4:-3] == '.'
+	if file[-4:-3] == '.':
 		file_name = file[:-4] + '.xml'
-	
+
 
 	img_struct = {}
 	tree = etree.parse(path + file_name)
@@ -38,7 +38,7 @@ def init_image(path, file):
 def get_image(path, file):
 	# correct file extension
 	file_name = file + '.jpg'
-	if file[-4:-3] == '.'
+	if file[-4:-3] == '.':
 		file_name = file[:-4] + '.jpg'
 
 	# read image as is (-1)
@@ -53,9 +53,9 @@ def get_image(path, file):
 def get_grayscale(path, file):
 	# correct file extension
 	file_name = file + '.jpg'
-	if file[-4:-3] == '.'
+	if file[-4:-3] == '.':
 		file_name = file[:-4] + '.jpg'
-		
+
 	# read image in grayscale (0)
 	image = cv2.imread(path + file_name, 0)
 	return image

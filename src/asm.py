@@ -8,7 +8,7 @@ from table import image_table
 # returns: n times n matirx of variances, where n is #landmarks
 def compute_var_dist():
     # number of (x,y)'s
-    n = len(image_table[0]['landmarks'])/2
+    n = int(len(image_table[0]['landmarks'])/2)
     # init dummy array to stack upon
     matrix_stack = np.ndarray((n,n))
 
@@ -19,12 +19,13 @@ def compute_var_dist():
         dist_matrix = np.ndarray((n,n))
         for i in range(0,n):
             # the element from which the distance is measured
-            k = np.array(shape[i*2], shape[i*2+1])
+            k = np.array((shape[i*2], shape[i*2+1]))
             for j in range(0,n):
                 # the element to which the distance is measured
-                l = np.array(shape[j*2], shape[j*2+1])
+                l = np.array((shape[j*2], shape[j*2+1]))
                 # the distance from k to l
                 dist_matrix[i][j] = np.linalg.norm(k-l)
+                #print(dist_matrix[i][j])
         # stack each dist_matrix 'on top' of eachother
         matrix_stack = np.dstack((matrix_stack, dist_matrix))
     # remove the dummy array
@@ -34,11 +35,11 @@ def compute_var_dist():
     var_matrix = np.ndarray((n,n))
 
     # calculate the variance of each point distance
-    for i in range(0, m):
-        for j in range(0, m):
+    for i in range(0, n):
+        for j in range(0, n):
             # find the variance of each point
             var_matrix[i][j] = np.var(matrix_stack[i][j])
-
+   # print(var_matrix)
     return var_matrix
 
 # Compute weight for the k'th point (landmark)
@@ -47,6 +48,7 @@ def compute_var_dist():
 def k_weight(var_matrix, k):
     w = np.sum(var_matrix[k])
     w_k = math.pow(w, -1)
+    print(w_k)
     return w_k
 
 # Compute X_i = sum^n-1_k=0 w_k * x_ik (31)
@@ -54,7 +56,7 @@ def k_weight(var_matrix, k):
 # returns: X_i
 def x_sum(shape, var_matrix):
     summ = 0
-    for i in range(0,len(shape)/2):
+    for i in range(0,int(len(shape)/2)):
         weight = k_weight(var_matrix, i)
         summ += weight * shape[i*2]
     return summ
@@ -64,7 +66,7 @@ def x_sum(shape, var_matrix):
 # returns: Y_i
 def y_sum(shape, var_matrix):
     summ = 0
-    for i in range(0,len(shape)/2):
+    for i in range(0,int(len(shape)/2)):
         weight = k_weight(var_matrix, i)
         summ += weight * shape[i*2+1]
     return summ
@@ -74,7 +76,7 @@ def y_sum(shape, var_matrix):
 # returns: Z
 def z_sum(shape, var_matrix):
     summ = 0
-    for i in range(0, len(shape)/2):
+    for i in range(0, int(len(shape)/2)):
         # w_k
         weight = k_weight(var_matrix, i)
         # x^2_nk
@@ -98,7 +100,7 @@ def w_sum(n, var_matrix):
 # returns: C_1
 def c1(shape1, shape2, var_matrix):
     summ = 0
-    for i in range(0, len(shape1)/2):
+    for i in range(0, int(len(shape1)/2)):
         weight = k_weight(var_matrix, i)
         x1x2 = shape1[i*2] * shape2[i*2]
         y1y2 = shape1[i*2+1] * shape2[i*2+1]
@@ -110,7 +112,7 @@ def c1(shape1, shape2, var_matrix):
 # returns: C_1
 def c2(shape1, shape2, var_matrix):
     summ = 0
-    for i in range(0, len(shape1)/2):
+    for i in range(0, int(len(shape1)/2)):
         weight = k_weight(var_matrix, i)
         x1x2 = shape1[i*2] * shape2[i*2]
         y1y2 = shape1[i*2+1] * shape2[i*2+1]
@@ -124,14 +126,14 @@ def c2(shape1, shape2, var_matrix):
 # returns: the vector x = a_x, a_y, t_x, t_y
 def solve_x(shape1, shape2, var_matrix):
     # Fill the big matrix A of (30)
-    A = np.zeros(4,4)
+    A = np.zeros((4,4))
     # diagonal X_2
     for i in range(0,4):
         A[i][i] = x_sum(shape2, var_matrix)
     # -Y_2
     A[0][1] = A[3][2] = -(y_sum(shape2, var_matrix))
     # W
-    A[0][2] = A[1][3] = w_sum(len(shape1)/2, var_matrix)
+    A[0][2] = A[1][3] = w_sum(int(len(shape1)/2), var_matrix)
     # Y_2
     A[1][0] = A[2][3] = abs(A[0][1])
     # Z
@@ -148,6 +150,9 @@ def solve_x(shape1, shape2, var_matrix):
     b[3] = c2(shape1, shape2, var_matrix)
     # solve for x = a_x, a_y, t_x, t_y)
     x = np.linalg.solve(A,b)
+    print(A)
+    print(b)
+    print(x)
 
     return x
 
@@ -159,20 +164,23 @@ def align_pair(shape2, x):
     a_y = x[1] # s sin theta
     t_x = x[2]
     t_y = x[3]
+    #print(x)
 
-    n = len(shape2)/2
+    n = int(len(shape2)/2)
     t = np.array([t_x,t_y])
     # create vector t (translation) of same lenght as shape2
     # with t_x, t_y repeated
     t = np.tile(t, n)
     # initiate a vector of same dimentions and values as shape2
     M = np.copy(shape2)
+    #print(M)
     # rotate and scale shape2 (now know as M)
     for k in range(0,n):
         M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
         M[k*2+1] = (a_y * M[k*2]) - (a_x * M[k*2+1])
     # translate by t
     M = M + t
+    #print(M)
     return M
 
 # Align all shapes with the given shape
@@ -184,7 +192,7 @@ def align_all_shapes(mean_shape):
     for img in image_table:
         shape = img['landmarks']
         x = solve_x(mean_shape, shape, var_matrix)
-        img['landmark'] = align_pair(shape, x)
+        img['landmarks'] = align_pair(shape, x)
     return var_matrix
 
 # Calculate the mean shape from the aligned shapes
@@ -221,7 +229,7 @@ def the_real_aligner():
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
     #while not converges:
-    for i in range(100): # hack until we have made the converges function.
-        mean_shape = mean_shape()
-        new_mean = normalize_mean(shape1, mean_shape, var_matrix)
+    for i in range(10): # hack until we have made the converges function.
+        mean = mean_shape()
+        new_mean = normalize_mean(shape1, mean, var_matrix)
         align_all_shapes(new_mean)
