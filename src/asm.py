@@ -39,7 +39,7 @@ def compute_var_dist():
         for j in range(0, n):
             # find the variance of each point
             var_matrix[i][j] = np.var(matrix_stack[i][j])
-   # print(var_matrix)
+    print(var_matrix)
     return var_matrix
 
 # Compute weight for the k'th point (landmark)
