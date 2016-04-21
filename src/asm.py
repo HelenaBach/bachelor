@@ -225,7 +225,7 @@ def normalize_mean(shape1, mean_shape, var_matrix):
 # The align algorithm of Cootes
 def the_real_aligner():
     # the first shape is saved to be used for normalizing mean
-    shape1 = image_table[0]['landmarks']
+    shape1 = np.copy(image_table[0]['landmarks'])
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
     #while not converges:

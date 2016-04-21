@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import segmentation
 import matplotlib.pyplot as plt
@@ -6,7 +7,15 @@ import parser
 from table import image_table
 import asm
 
-path = '../../Data/leafscan/'
+
+try:
+    # get the name of the csv file of the reviews
+    path = sys.argv[1] 
+except:
+    print('The path of the image directory should be passed as argument to this script')
+    sys.exit(2)
+
+#path = '../../Data/leafscan/'
 images = os.listdir(path)[:9]
 
 for image in images:

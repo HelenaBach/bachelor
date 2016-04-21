@@ -45,6 +45,7 @@ def get_image(path, file):
 	image = cv2.imread(path + file_name, -1)
 	if image == None:
 		print('no image found')
+		sys.exit(3)
 	return image
 
 # get gray scaled image as a numpy array
@@ -58,6 +59,9 @@ def get_grayscale(path, file):
 
 	# read image in grayscale (0)
 	image = cv2.imread(path + file_name, 0)
+	if image == None:
+		print('no image found')
+		sys.exit(3)
 	return image
 
 # get segmentated image as a numpy array
@@ -67,7 +71,10 @@ def get_binary(path, file):
 	# should we call otsu every time or store the segmented image?
 	if image.endswith('.jpg'):
 	    # indlæs billedet i greyscale (det er det 0 betyder)
-	    img = cv2.imread('../data/leafscan/' + file,0)
+	    img = cv2.imread(path + file,0)
+	    if img == None:
+			print('no image found')
+			sys.exit(3)
 	    # gør Otsu agtige ting
 	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU)
 	return
