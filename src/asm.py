@@ -39,7 +39,7 @@ def compute_var_dist():
         for j in range(0, n):
             # find the variance of each point
             var_matrix[i][j] = np.var(matrix_stack[i][j])
-    print(var_matrix)
+    #print(var_matrix)
     return var_matrix
 
 # Compute weight for the k'th point (landmark)
@@ -48,7 +48,7 @@ def compute_var_dist():
 def k_weight(var_matrix, k):
     w = np.sum(var_matrix[k])
     w_k = math.pow(w, -1)
-    print(w_k)
+    #print(w_k)
     return w_k
 
 # Compute X_i = sum^n-1_k=0 w_k * x_ik (31)
@@ -148,12 +148,11 @@ def solve_x(shape1, shape2, var_matrix):
     b[2] = c1(shape1, shape2, var_matrix)
     # C_2
     b[3] = c2(shape1, shape2, var_matrix)
-    b = np.transpose(b)
     # solve for x = a_x, a_y, t_x, t_y)
     x = np.linalg.solve(A,b)
-    print(A)
-    print(b)
-    print(x)
+    #print(A)
+    #print(b)
+    #print(x)
 
     return x
 
@@ -230,7 +229,7 @@ def the_real_aligner():
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
     #while not converges:
-    for i in range(10): # hack until we have made the converges function.
-        mean = mean_shape()
-        new_mean = normalize_mean(shape1, mean, var_matrix)
-        align_all_shapes(new_mean)
+    #for i in range(10): # hack until we have made the converges function.
+    #    mean = mean_shape()
+    #    new_mean = normalize_mean(shape1, mean, var_matrix)
+    #    align_all_shapes(new_mean)
