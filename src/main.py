@@ -9,14 +9,16 @@ import asm
 
 
 try:
-    # get the name of the csv file of the reviews
-    path = sys.argv[1] 
+        # get the name of the csv file of the reviews
+        path = sys.argv[1] 
 except:
-    print('The path of the image directory should be passed as argument to this script')
-    sys.exit(2)
+        print('The path of the image directory should be passed as argument to this script')
+        sys.exit(2)
 
 #path = '../../Data/leafscan/'
 images = os.listdir(path)[:9]
+#print(images)
+#sys.exit(2)
 
 for image in images:
         if image.endswith('.xml'):
