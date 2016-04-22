@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import math
 from table import image_table
+import sys # debugging
 
 # Compute the V_R_kl of all distances
 # argument: image_table of all img_structs
@@ -30,6 +31,7 @@ def compute_var_dist():
         matrix_stack = np.dstack((matrix_stack, dist_matrix))
     # remove the dummy array
     matrix_stack = np.delete(matrix_stack, 0, axis=2)
+    #print(matrix_stack)
 
     # init matrix of variances with uninitialized values
     var_matrix = np.ndarray((n,n))
@@ -114,9 +116,9 @@ def c2(shape1, shape2, var_matrix):
     summ = 0
     for i in range(0, int(len(shape1)/2)):
         weight = k_weight(var_matrix, i)
-        x1x2 = shape1[i*2] * shape2[i*2]
-        y1y2 = shape1[i*2+1] * shape2[i*2+1]
-        summ += weight * (x1x2 - y1y2)
+        y1x2 = shape1[i*2+1] * shape2[i*2]
+        x1y2 = shape1[i*2] * shape2[i*2+1]
+        summ += weight * (y1x2 - x1y2)
     return summ
 
 # Solve Ax=b (30)
@@ -177,9 +179,12 @@ def align_pair(shape2, x):
     # rotate and scale shape2 (now know as M)
     for k in range(0,n):
         M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
-        M[k*2+1] = (a_y * M[k*2]) - (a_x * M[k*2+1])
+        M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
     # translate by t
+    #print('t: ',t)
+    #print('M:', M)
     M = M + t
+    #print('M:', M)
     #print(M)
     return M
 
@@ -229,7 +234,7 @@ def the_real_aligner():
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
     #while not converges:
-    #for i in range(10): # hack until we have made the converges function.
-    #    mean = mean_shape()
-    #    new_mean = normalize_mean(shape1, mean, var_matrix)
-    #    align_all_shapes(new_mean)
+    for i in range(10): # hack until we have made the converges function.
+        mean = mean_shape()
+        new_mean = normalize_mean(shape1, mean, var_matrix)
+        align_all_shapes(new_mean)

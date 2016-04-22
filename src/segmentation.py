@@ -16,6 +16,7 @@ def otsu(image):
 ## arguments : binary image as numpy array of leaf - background
 ## returns   : numpy array of landmark coordinats (x, y tuples)
 def landmark_setter(image, gray_image): # gray_image
+	num_of_landmarks = 100
 
 	# need to invert the image to use findContours
 	image = np.invert(image)
@@ -33,8 +34,7 @@ def landmark_setter(image, gray_image): # gray_image
 			max_len = len(con)
 			contour = con
 	# want to uniformly place 100 point along the contour
-	pix_pr_landmark = math.floor(len(contour) / 100)
-	print(pix_pr_landmark)
+	pix_pr_landmark = math.floor(len(contour) / num_of_landmarks)
 	# floor is used to ensure that we can put 100 points
 
 	# contour have the format [[[x0, y0]], [[x1, y1]], ... ,[[xN, yN]]] -> [[x0, y0], [x1, y1], ... ,[xN, yN]]

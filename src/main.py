@@ -15,11 +15,10 @@ except:
         print('The path of the image directory should be passed as argument to this script')
         sys.exit(2)
 
-#path = '../../Data/leafscan/'
-images = os.listdir(path)[:9]
-#print(images)
-#sys.exit(2)
+images = os.listdir(path)[:100]
 
+
+# initialize the image table 
 for image in images:
         if image.endswith('.xml'):
                 im_struct = parser.init_image(path, image)
@@ -34,6 +33,9 @@ for im_struct in image_table:
         landmarks = segmentation.landmark_setter(binary, img)
         # update the image table
         im_struct['landmarks'] = landmarks
+        #print('Image ID: {}'.format(im_struct['media_id']))
+        #print('Landmarks:')
+        #print(landmarks)
         xes = landmarks[::2]
         yes = landmarks[1::2]
         plt.plot(xes,yes)
@@ -50,8 +52,12 @@ for im_struct in image_table:
         landmarks = im_struct['landmarks']
         xes = landmarks[::2]
         yes = landmarks[1::2]
+
+#        print('Image ID: {}'.format(im_struct['media_id']))
+#        print('Landmarks:')
+#        print(landmarks)
         plt.plot(xes,yes)
 
 # plot aligned shapes
-
 plt.show()
+
