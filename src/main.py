@@ -33,9 +33,6 @@ for im_struct in image_table:
         landmarks = segmentation.landmark_setter(binary, img)
         # update the image table
         im_struct['landmarks'] = landmarks
-        #print('Image ID: {}'.format(im_struct['media_id']))
-        #print('Landmarks:')
-        #print(landmarks)
         xes = landmarks[::2]
         yes = landmarks[1::2]
         plt.plot(xes,yes)
@@ -52,12 +49,8 @@ for im_struct in image_table:
         landmarks = im_struct['landmarks']
         xes = landmarks[::2]
         yes = landmarks[1::2]
-
-#        print('Image ID: {}'.format(im_struct['media_id']))
-#        print('Landmarks:')
-#        print(landmarks)
         plt.plot(xes,yes)
 
 # plot aligned shapes
-plt.show()
 
+plt.show()
