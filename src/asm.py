@@ -201,7 +201,7 @@ def align_all_shapes(mean_shape):
     return var_matrix
 
 # Calculate the mean shape from the aligned shapes
-# returns: the mean shaoe
+# returns: the mean shape
 def mean_shape():
     shape_stack = image_table[0]['landmarks']
     for img in image_table[1:]:
@@ -238,3 +238,14 @@ def the_real_aligner():
         mean = mean_shape()
         new_mean = normalize_mean(shape1, mean, var_matrix)
         align_all_shapes(new_mean)
+        if i == 9:
+            return new_mean
+
+# HVORDAN VIL VI ORGANISERE ASM ? 
+    pca.train_get_components(data, (new_)mean, dim)
+    final_data = np.dot(feature_vector, adjusted_data)
+    return final_data
+
+#for image in image_table:
+#    data.append(image['feature'])
+#pca.data()
