@@ -33,23 +33,27 @@ for im_struct in image_table:
         landmarks = segmentation.landmark_setter(binary, img)
         # update the image table
         im_struct['landmarks'] = landmarks
-        xes = landmarks[::2]
-        yes = landmarks[1::2]
-        plt.plot(xes,yes)
+#        xes = landmarks[::2]
+#        yes = landmarks[1::2]
+#        plt.plot(xes,yes)
 
 # plot the shapes
 
-plt.show()
+#plt.show()
 # align the dataset
-asm.the_real_aligner()
+mean = asm.the_real_aligner()
+#asm.the_real_aligner()
+xes = mean[::2]
+yes = mean[1::2]
+plt.plot(xes,yes)
 
 # put aligned landmarks in new plot_list, so that we can plot them
 
-for im_struct in image_table:
-        landmarks = im_struct['landmarks']
-        xes = landmarks[::2]
-        yes = landmarks[1::2]
-        plt.plot(xes,yes)
+#for im_struct in image_table:
+#        landmarks = im_struct['landmarks']
+#        xes = landmarks[::2]
+#        yes = landmarks[1::2]
+#        plt.plot(xes,yes)
 
 # plot aligned shapes
 
