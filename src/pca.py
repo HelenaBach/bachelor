@@ -23,7 +23,7 @@ def train_get_components(data, mean, dim):
 	#print(K.shape)
 
 	# Columns of V are orthonormal eigenvectores of the covariance matrix
-	eigenvector_matrix = V #V.transpose()
+	eigenvector_matrix = V.transpose() # måske kun V? 
 	print('eigenvectors')
 	print(eigenvector_matrix)
 	eigen_pair = []
@@ -76,3 +76,5 @@ print(w)
 print('eigen vectors through sklearn')
 print(v)
 
+# Der er noget med transponering. Desuden så er der noget med fortegn og rækkefølge.
+# Så styr på eigenvectors, og så tror jeg at det spiller
