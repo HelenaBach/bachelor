@@ -1,15 +1,14 @@
 import numpy as np
-#from sklearn.decomposition import PCA
 
-#data = np.array([[-1, -1, -1, -1], [-2, -1, -2, -4], [-3, -2, -2, -2], [1, 1, 4, 2], [2, 1, 3, 5], [3, 2, 1, 3]])
+data = np.array([[-1, -1, -1, -1],[-2, -1, -2, -4],[-3, -2, -2, -2], [1, 1, 4, 2], [2, 1, 3, 5], [3, 2, 1, 3]])
+#data = np.array([[-1, -1, -1, -1],
+#				  [-2, -1, -2, -4],
+#				  [-3, -2, -2, -2],
+#				  [ 1,  1,  4,  2],
+#				  [ 2,  1,  3,  5],
+#				  [ 3,  2,  1,  3]])
 
 def train_get_components(data, mean, dim):
-#	pca = PCA(n_components=acc)#0.95) #'mle' eller 2
-#	pca.fit(data)
-#	return pca.components_
-#
-#	#print(pca.explained_variance_ratio_)
-#	#print(pca.components_)
 	
 	# subtract the mean of each dimension from
 	# produces data set whose mean is zero
@@ -17,21 +16,26 @@ def train_get_components(data, mean, dim):
 	# mean is an array of size # of landmarks * 2 
 	adjusted_data = data - mean
 
+
 	# find eigenvectors and eigenvalues of covariance matrix of data
-	U, K, V = np.linalg.svd(adjusted_data)
+	U, k, V = np.linalg.svd(adjusted_data)
+	#K = np.diag(k)
+	#print(K.shape)
 
 	# Columns of V are orthonormal eigenvectores of the covariance matrix
-	eigenvector_matrix = V.transpose()
-
+	eigenvector_matrix = V #V.transpose()
+	print('eigenvectors')
+	print(eigenvector_matrix)
 	eigen_pair = []
 	# for each eigenvector, find eigenvalue
 	for i in range(len(eigenvector_matrix)): # <- should maybe just be V?
 		# eigenvalue is lambda_i = K_ii^2 / N, N = len(K) => K = N x D matrix
-		eigenvalue = int(K[i][i]^2/len(K))
-		eigen_pair[i] = (eigenvalue, eigenvector_matrix[i])
+		# måske K[i][i] i stedet?
+		eigenvalue = int(k[i]**2/len(k))
+		eigen_pair.append((eigenvalue, eigenvector_matrix[i]))
 
 	# sort according to the eigenvalue (in place)
-	eigen_pair.sort(key=lambda tup: tup[1])
+	eigen_pair.sort(key=lambda tup: tup[0])
 
 	if dim < 1:
 		# if dim is percentage:
@@ -56,3 +60,19 @@ def train_get_components(data, mean, dim):
 	#final_data = np.dot(feature_vector, adjusted_data)
 	#return final_data
 	return (feature_vector, adjusted_data)
+
+mean = [0, 0, 0.5, 0.5]
+print(train_get_components(data, mean, 4))
+
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=4)
+pca.fit(data)
+#print(pca.explained_variance_ratio_)
+#print(pca.components_)
+w, v = np.linalg.eig(pca.get_covariance())
+print('eigen values through sklearn')
+print(w)
+print('eigen vectors through sklearn')
+print(v)
+
