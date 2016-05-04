@@ -29,32 +29,33 @@ for im_struct in image_table:
         img = parser.get_grayscale(path, im_struct['media_id'])
         # gør Otsu agtige ting
         binary = segmentation.otsu(img)
-        # get landmarks
+        # set landmarks
         landmarks = segmentation.landmark_setter(binary, img)
         # update the image table
         im_struct['landmarks'] = landmarks
-#        xes = landmarks[::2]
-#        yes = landmarks[1::2]
-#        plt.plot(xes,yes)
+        # plot the shape 
+        xes = landmarks[::2]
+        yes = landmarks[1::2]
+        plt.plot(xes,yes)
 
-# plot the shapes
+# show all the shapes in one graph
+plt.show()
 
-#plt.show()
 # align the dataset
 mean = asm.the_real_aligner()
-#asm.the_real_aligner()
+
+# plot the mean shape
 xes = mean[::2]
 yes = mean[1::2]
 plt.plot(xes,yes)
 
 # put aligned landmarks in new plot_list, so that we can plot them
 
-#for im_struct in image_table:
-#        landmarks = im_struct['landmarks']
-#        xes = landmarks[::2]
-#        yes = landmarks[1::2]
-#        plt.plot(xes,yes)
+for im_struct in image_table:
+        landmarks = im_struct['landmarks']
+        xes = landmarks[::2]
+        yes = landmarks[1::2]
+        plt.plot(xes,yes)
 
 # plot aligned shapes
-
 plt.show()

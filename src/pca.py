@@ -7,6 +7,7 @@ data = np.array([[-1, -1, -1, -1],[-2, -1, -2, -4],[-3, -2, -2, -2], [1, 1, 4, 2
 #				  [ 1,  1,  4,  2],
 #				  [ 2,  1,  3,  5],
 #				  [ 3,  2,  1,  3]])
+# D = 4, N = 6
 
 def train_get_components(data, mean, dim):
 	
@@ -23,19 +24,18 @@ def train_get_components(data, mean, dim):
 	#print(K.shape)
 
 	# Columns of V are orthonormal eigenvectores of the covariance matrix
-	eigenvector_matrix = V.transpose() # måske kun V? 
-	print('eigenvectors')
-	print(eigenvector_matrix)
+	eigenvector_matrix = V 
+	
 	eigen_pair = []
 	# for each eigenvector, find eigenvalue
 	for i in range(len(eigenvector_matrix)): # <- should maybe just be V?
 		# eigenvalue is lambda_i = K_ii^2 / N, N = len(K) => K = N x D matrix
 		# måske K[i][i] i stedet?
-		eigenvalue = int(k[i]**2/len(k))
+		eigenvalue = k[i]**2/len(k)
 		eigen_pair.append((eigenvalue, eigenvector_matrix[i]))
 
 	# sort according to the eigenvalue (in place)
-	eigen_pair.sort(key=lambda tup: tup[0])
+	eigen_pair.sort(key=lambda tup: tup[0], reverse=True)
 
 	if dim < 1:
 		# if dim is percentage:
@@ -62,19 +62,20 @@ def train_get_components(data, mean, dim):
 	return (feature_vector, adjusted_data)
 
 mean = [0, 0, 0.5, 0.5]
-print(train_get_components(data, mean, 4))
+print(train_get_components(data, mean, 3))
 
 from sklearn.decomposition import PCA
 
-pca = PCA(n_components=4)
+pca = PCA(n_components=3)
 pca.fit(data)
 #print(pca.explained_variance_ratio_)
-#print(pca.components_)
-w, v = np.linalg.eig(pca.get_covariance())
-print('eigen values through sklearn')
-print(w)
-print('eigen vectors through sklearn')
-print(v)
+print('sklearn components')
+print(pca.components_)
+#w, v = np.linalg.eig(pca.get_covariance())
+#print('eigen values through sklearn')
+#print(w)
+#print('eigen vectors through sklearn')
+#print(v)
 
 # Der er noget med transponering. Desuden så er der noget med fortegn og rækkefølge.
 # Så styr på eigenvectors, og så tror jeg at det spiller
