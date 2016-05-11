@@ -1,14 +1,5 @@
 import numpy as np
 
-data = np.array([[-1, -1, -1, -1],[-2, -1, -2, -4],[-3, -2, -2, -2], [1, 1, 4, 2], [2, 1, 3, 5], [3, 2, 1, 3]])
-#data = np.array([[-1, -1, -1, -1],
-#				  [-2, -1, -2, -4],
-#				  [-3, -2, -2, -2],
-#				  [ 1,  1,  4,  2],
-#				  [ 2,  1,  3,  5],
-#				  [ 3,  2,  1,  3]])
-# D = 4, N = 6
-
 def train_get_components(data, mean, dim):
 	
 	# subtract the mean of each dimension from
@@ -59,21 +50,25 @@ def train_get_components(data, mean, dim):
 	#return final_data
 	return (feature_vector, adjusted_data)
 
-mean = [0, 0, 0.5, 0.5]
-print(train_get_components(data, mean, 3))
 
-from sklearn.decomposition import PCA
+# test on small example:
 
-pca = PCA(n_components=3)
-pca.fit(data)
-#print(pca.explained_variance_ratio_)
-print('sklearn components')
-print(pca.components_)
-#w, v = np.linalg.eig(pca.get_covariance())
-#print('eigen values through sklearn')
-#print(w)
-#print('eigen vectors through sklearn')
-#print(v)
+#data = np.array([[-1, -1, -1, -1],[-2, -1, -2, -4],[-3, -2, -2, -2], [1, 1, 4, 2], [2, 1, 3, 5], [3, 2, 1, 3]])
+##data = np.array([[-1, -1, -1, -1],
+##				  [-2, -1, -2, -4],
+##				  [-3, -2, -2, -2],
+##				  [ 1,  1,  4,  2],
+##				  [ 2,  1,  3,  5],
+##				  [ 3,  2,  1,  3]])
+## D = 4, N = 6
 
-# Der er noget med transponering. Desuden så er der noget med fortegn og rækkefølge.
-# Så styr på eigenvectors, og så tror jeg at det spiller
+#mean = [0, 0, 0.5, 0.5]
+#print(train_get_components(data, mean, 3))
+#
+#from sklearn.decomposition import PCA
+#
+#pca = PCA(n_components=3)
+#pca.fit(data)
+##print(pca.explained_variance_ratio_)
+#print('sklearn components')
+#print(pca.components_)
