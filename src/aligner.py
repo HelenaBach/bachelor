@@ -240,12 +240,3 @@ def the_real_aligner():
         align_all_shapes(new_mean)
         if i == 9:
             return new_mean
-
-# HVORDAN VIL VI ORGANISERE ASM ? 
-    pca.train_get_components(data, (new_)mean, dim)
-    final_data = np.dot(feature_vector, adjusted_data)
-    return final_data
-
-#for image in image_table:
-#    data.append(image['feature'])
-#pca.data()
