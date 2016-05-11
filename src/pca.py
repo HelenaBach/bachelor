@@ -20,22 +20,20 @@ def train_get_components(data, mean, dim):
 
 	# find eigenvectors and eigenvalues of covariance matrix of data
 	U, k, V = np.linalg.svd(adjusted_data)
-	#K = np.diag(k)
-	#print(K.shape)
+	#K = np.diag(k) -> k is a vector with the values of the diagonal
 
 	# Columns of V are orthonormal eigenvectores of the covariance matrix
 	eigenvector_matrix = V 
-	
+
 	eigen_pair = []
 	# for each eigenvector, find eigenvalue
 	for i in range(len(eigenvector_matrix)): # <- should maybe just be V?
 		# eigenvalue is lambda_i = K_ii^2 / N, N = len(K) => K = N x D matrix
-		# måske K[i][i] i stedet?
 		eigenvalue = k[i]**2/len(k)
 		eigen_pair.append((eigenvalue, eigenvector_matrix[i]))
 
 	# sort according to the eigenvalue (in place)
-	eigen_pair.sort(key=lambda tup: tup[0], reverse=True)
+#	eigen_pair.sort(key=lambda tup: tup[0], reverse=True)
 
 	if dim < 1:
 		# if dim is percentage:
