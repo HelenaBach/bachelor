@@ -235,8 +235,9 @@ def the_real_aligner():
     var_matrix = align_all_shapes(shape1)
     #while not converges:
     for i in range(10): # hack until we have made the converges function.
+        print('align iteration:' + str(i))
         mean = mean_shape()
         new_mean = normalize_mean(shape1, mean, var_matrix)
         align_all_shapes(new_mean)
         if i == 9:
-            return new_mean
+            return new_mean, var_matrix
