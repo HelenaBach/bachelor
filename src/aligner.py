@@ -26,12 +26,10 @@ def compute_var_dist():
                 l = np.array((shape[j*2], shape[j*2+1]))
                 # the distance from k to l
                 dist_matrix[i][j] = np.linalg.norm(k-l)
-                #print(dist_matrix[i][j])
         # stack each dist_matrix 'on top' of eachother
         matrix_stack = np.dstack((matrix_stack, dist_matrix))
     # remove the dummy array
     matrix_stack = np.delete(matrix_stack, 0, axis=2)
-    #print(matrix_stack)
 
     # init matrix of variances with uninitialized values
     var_matrix = np.ndarray((n,n))
@@ -41,7 +39,6 @@ def compute_var_dist():
         for j in range(0, n):
             # find the variance of each point
             var_matrix[i][j] = np.var(matrix_stack[i][j])
-    #print(var_matrix)
     return var_matrix
 
 # Compute weight for the k'th point (landmark)
@@ -50,7 +47,6 @@ def compute_var_dist():
 def k_weight(var_matrix, k):
     w = np.sum(var_matrix[k])
     w_k = math.pow(w, -1)
-    #print(w_k)
     return w_k
 
 # Compute X_i = sum^n-1_k=0 w_k * x_ik (31)
@@ -152,10 +148,6 @@ def solve_x(shape1, shape2, var_matrix):
     b[3] = c2(shape1, shape2, var_matrix)
     # solve for x = a_x, a_y, t_x, t_y)
     x = np.linalg.solve(A,b)
-    #print(A)
-    #print(b)
-    #print(x)
-
     return x
 
 # Align shape2 (x_2) by mapping x_2 onto M(x_2)+t
@@ -166,7 +158,6 @@ def align_pair(shape2, x):
     a_y = x[1] # s sin theta
     t_x = x[2]
     t_y = x[3]
-    #print(x)
 
     n = int(len(shape2)/2)
     t = np.array([t_x,t_y])
@@ -175,17 +166,12 @@ def align_pair(shape2, x):
     t = np.tile(t, n)
     # initiate a vector of same dimentions and values as shape2
     M = np.copy(shape2)
-    #print(M)
     # rotate and scale shape2 (now know as M)
     for k in range(0,n):
         M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
         M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
     # translate by t
-    #print('t: ',t)
-    #print('M:', M)
     M = M + t
-    #print('M:', M)
-    #print(M)
     return M
 
 # Align all shapes with the given shape
@@ -224,20 +210,23 @@ def normalize_mean(shape1, mean_shape, var_matrix):
     norm_mean = align_pair(mean_shape, x)
     return norm_mean
 
-# Checks if the aligning converges
-#def converges()
-
 # The align algorithm of Cootes
 def the_real_aligner():
     # the first shape is saved to be used for normalizing mean
     shape1 = np.copy(image_table[0]['landmarks'])
     # rotate, scale and translate each shape to align with the first shape
     var_matrix = align_all_shapes(shape1)
-    #while not converges:
-    for i in range(10): # hack until we have made the converges function.
-        print('align iteration:' + str(i))
+    # initial previous mean_shape - dummy 1x200 vector of zeros
+    prev_mean = np.array((0))
+    prev_mean = np.tile(prev_mean, 200)
+    for i in range(10):
+        print('aligner iteration: ' + str(i))
         mean = mean_shape()
+        # check if prev_mean and mean is 'equal' - does the process converge
+        diff = sum(abs(prev_mean-mean))
+        if diff < 50 or i == 9:
+            print('sum of diff: ' + str(diff))
+            return mean, var_matrix
         new_mean = normalize_mean(shape1, mean, var_matrix)
         align_all_shapes(new_mean)
-        if i == 9:
-            return new_mean, var_matrix
+        prev_mean = mean

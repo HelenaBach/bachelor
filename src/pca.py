@@ -1,11 +1,11 @@
 import numpy as np
 
 def fit(data, mean, dim):
-	
+
 	# subtract the mean of each dimension from
 	# produces data set whose mean is zero
 
-	# mean is an array of size # of landmarks * 2 
+	# mean is an array of size # of landmarks * 2
 	adjusted_data = data - mean
 
 
@@ -14,7 +14,7 @@ def fit(data, mean, dim):
 	#K = np.diag(k) -> k is a vector with the values of the diagonal
 
 	# Columns of V are orthonormal eigenvectores of the covariance matrix
-	eigenvector_matrix = V 
+	eigenvector_matrix = V
 
 	eigen_pair = []
 	# for each eigenvector, find eigenvalue
@@ -25,7 +25,7 @@ def fit(data, mean, dim):
 
 	# sort according to the eigenvalue (in place)
 #	eigen_pair.sort(key=lambda tup: tup[0], reverse=True)
-	
+
 	# all variance is explained by sum of eigenvalues
 	total_variance = sum(i for i, j in eigen_pair)
 	if dim < 1:
@@ -48,31 +48,4 @@ def fit(data, mean, dim):
 		principal_axis = [y for (x, y) in eigen_pair[:dim]]
 		component_variance = [(x, x/total_variance) for (x, y) in eigen_pair[:dim]]
 
-	# maybe we want this to be done in ACM instead of in the PCA?
-	# then simply return the dimensions and maybe the adjusted data
-	#final_data = np.dot(principal_axis, adjusted_data)
-	#return final_data
 	return (principal_axis, component_variance)
-
-
-# test on small example:
-
-#data = np.array([[-1, -1, -1, -1],[-2, -1, -2, -4],[-3, -2, -2, -2], [1, 1, 4, 2], [2, 1, 3, 5], [3, 2, 1, 3]])
-##data = np.array([[-1, -1, -1, -1],
-##				  [-2, -1, -2, -4],
-##				  [-3, -2, -2, -2],
-##				  [ 1,  1,  4,  2],
-##				  [ 2,  1,  3,  5],
-##				  [ 3,  2,  1,  3]])
-## D = 4, N = 6
-
-#mean = [0, 0, 0.5, 0.5]
-#print(train_get_components(data, mean, 3))
-#
-#from sklearn.decomposition import PCA
-#
-#pca = PCA(n_components=3)
-#pca.fit(data)
-##print(pca.explained_variance_ratio_)
-#print('sklearn components')
-#print(pca.components_)

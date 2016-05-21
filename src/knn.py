@@ -1,6 +1,7 @@
 import numpy as np
-from table import image_table 
+from table import image_table
 import sys
+
 def construct():
 	training_data = []
 	for image_struct in image_table:
@@ -31,7 +32,7 @@ def getNeighbors(trainingSet, testInstance, k):
 	neighbors = [x for (x, y) in distances[:k]]
 
 	return neighbors
- 
+
 def getResponse(neighbors):
 	classVotes = {}
 	for x in range(len(neighbors)):
@@ -44,9 +45,9 @@ def getResponse(neighbors):
 	sortedVotes = sorted(classVotes.items(), key=lambda item:item[1], reverse=True)
 	# the number of votes that this classification got
 	#votes = sortedVotes[0][1]
-	#sum(i[1] for i in sortedVotes)
+
 	# the classification is found by:
-	# sortedVotes[0][0] 
+	# sortedVotes[0][0]
 
 	# return the whole list of sorted votes
 	return sortedVotes
@@ -56,9 +57,7 @@ def classify(training_data, new_shape, k):
 
 	neighbors = getNeighbors(training_data, new_shape, k)
 	# get a sorted list of the class id and the number of votes
-	# result[0][0] should give the classification  
+	# result[0][0] should give the classification
 	result = getResponse(neighbors)
 
 	return result
-
-

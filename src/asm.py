@@ -13,22 +13,24 @@ import pca
 
 
 def construct():
-	with open('mean_1200.p', 'rb') as f:
+	with open('mean.p', 'rb') as f:
 	    mean = pickle.load(f)
-	
-	with open('data_1200.p', 'rb') as f:
+
+	with open('image_table.p', 'rb') as f:
 	    data = pickle.load(f)
 
-	with open('var_matrix_1200.p', 'rb') as f:
+	with open('var_matrix.p', 'rb') as f:
 	    var_matrix = pickle.load(f)
-	#mean, var_matrix = aligner.the_real_aligner()
-	#
-	#data = []
-	#for im_struct in image_table:
-	#        landmarks = im_struct['landmarks']
-	#        data.append(landmarks)
 
-	
+        # If the data is not pre-aligned, aligner.the_real_aligner() should
+        # be run.
+
+	data = []
+	for im_struct in image_table:
+	        landmarks = im_struct['landmarks']
+	        data.append(landmarks)
+
+
 	principal_axis, comp_variance = pca.fit(data, mean, 0.95)
 
 	#print('95')
@@ -47,8 +49,6 @@ def construct():
 
 	return mean, var_matrix, principal_axis, comp_variance
 
-#construct()
-
 def image_search(asm_model, image):
 	#image = cv2.imread('../data/leafscan/27.jpg', 0)
 	sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
@@ -64,7 +64,7 @@ def image_search(asm_model, image):
 	#cv2.imshow('image', sobely)
 	#cv2.waitKey(0)
 	#image2 = sobelx**2 + sobely**2
-	
+
 	#image_diff = abs(sobelx) + abs(sobely)
 	
 	#plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
