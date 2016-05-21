@@ -239,4 +239,4 @@ def the_real_aligner():
         new_mean = normalize_mean(shape1, mean, var_matrix)
         align_all_shapes(new_mean)
         if i == 9:
-            return new_mean
+            return new_mean, var_matrix
