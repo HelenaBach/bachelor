@@ -54,6 +54,23 @@ def knn_show_accuracy(classifier, test_list, fold):
 		print("Accuracy: {0}".format(accuracy))
 
 
+def getAccuracy(testSet, predictions):
+	correct = 0
+	for x in range(len(testSet)):
+		# The test set have the class id as the last element 
+		if testSet[x][-1] == predictions[x]:
+			correct += 1
+	return (correct/float(len(testSet))) * 100.0
+
+
+def noget(testset):
+	for x in range(len(testSet)):
+		neighbors = getNeighbors(trainingSet, testSet[x], k)
+		result = getResponse(neighbors)
+		predictions.append(result)
+		print('> predicted=' + repr(result) + ', actual=' + repr(testSet[x][-1]))
+	accuracy = getAccuracy(testSet, predictions)
+	print('Accuracy: ' + repr(accuracy) + '%')
 ### print statistics ###
 ## test if any flags are set or any methods has been called ##
 

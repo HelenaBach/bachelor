@@ -1,6 +1,6 @@
 import numpy as np
 
-def fit(data, mean, dim=len(mean)):
+def fit(data, mean, dim):
 	
 	# subtract the mean of each dimension from
 	# produces data set whose mean is zero

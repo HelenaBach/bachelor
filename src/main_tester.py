@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import parser
 from table import image_table
 import aligner
-import pca
+#import pca
 import math
 import pickle 
 
@@ -18,7 +18,7 @@ except:
         sys.exit(2)
 
 # get all images
-images = os.listdir(path)[:450]
+images = os.listdir(path)[:1200]
 
 # initialize the image table 
 for image in images:
@@ -37,38 +37,42 @@ for im_struct in image_table:
         # update the image table
         im_struct['landmarks'] = landmarks
         # plot the shape 
-        xes = landmarks[::2]
-        yes = landmarks[1::2]
-        plt.plot(xes,yes)
+ #       xes = landmarks[::2]
+ #       yes = landmarks[1::2]
+ #       plt.plot(xes,yes)
 
 # show all the shapes in one graph
-plt.show()
+#plt.show()
 
+
+# HUSK AT INDSÆTTE PRINT STATEMENTS NÅR DE STORE TRÆNINGSSÆT KØRES
+## (SÅ VI HAR ET OVERBLIK OVER HVOR LANGT DET DER KØRER ER)
 # align the dataset
-mean = aligner.the_real_aligner()
+mean, var_matrix = aligner.the_real_aligner()
 
 # plot the mean shape
-xes = mean[::2]
-yes = mean[1::2]
-plt.plot(xes,yes)
+#xes = mean[::2]
+#yes = mean[1::2]
+#plt.plot(xes,yes)
 
-# put aligned landmarks in new plot_list, so that we can plot them
 
 data = []
 for im_struct in image_table:
         landmarks = im_struct['landmarks']
-        xes = landmarks[::2]
-        yes = landmarks[1::2]
-        plt.plot(xes,yes)
+  #      xes = landmarks[::2]
+  #      yes = landmarks[1::2]
+  #      plt.plot(xes,yes)
         data.append(landmarks)
 
 
 # plot aligned shapes
-plt.show()
+#plt.show()
 
 #with open(im_table, 'wb') as f:
 #    pickle.dump(image_table, f)
-with open('mean.p', 'wb') as f:
+with open('mean_1200.p', 'wb') as f:
     pickle.dump(mean, f)
-with open('data.p', 'wb') as f:
+with open('data_1200.p', 'wb') as f:
     pickle.dump(data, f)
+with open('var_matrix_1200.p', 'wb') as f:
+    pickle.dump(var_matrix, f) 
