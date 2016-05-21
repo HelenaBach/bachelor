@@ -220,6 +220,7 @@ def the_real_aligner():
     prev_mean = np.array((0))
     prev_mean = np.tile(prev_mean, 200)
     for i in range(10):
+        print('aligner iteration: ' + str(i))
         mean = mean_shape()
         # check if prev_mean and mean is 'equal' - does the process converge
         diff = sum(abs(prev_mean-mean))

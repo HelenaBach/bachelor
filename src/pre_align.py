@@ -9,6 +9,9 @@ import aligner
 #import pca
 import math
 import pickle
+import time # to print time of execution
+
+start_time = time.time()
 
 try:
         path = sys.argv[1]
@@ -48,3 +51,5 @@ with open('mean.p', 'wb') as f:
         pickle.dump(mean, f)
 with open('var_matrix.p', 'wb') as f:
         pickle.dump(var_matrix, f)
+
+print("--- %s seconds ---" % (time.time() - start_time))
