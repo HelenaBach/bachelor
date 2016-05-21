@@ -12,22 +12,24 @@ import pca
 
 
 def construct():
-	with open('mean_1200.p', 'rb') as f:
+	with open('mean.p', 'rb') as f:
 	    mean = pickle.load(f)
-	
-	with open('data_1200.p', 'rb') as f:
+
+	with open('image_table.p', 'rb') as f:
 	    data = pickle.load(f)
 
-	with open('var_matrix_1200.p', 'rb') as f:
+	with open('var_matrix.p', 'rb') as f:
 	    var_matrix = pickle.load(f)
-	#mean, var_matrix = aligner.the_real_aligner()
-	#
-	#data = []
-	#for im_struct in image_table:
-	#        landmarks = im_struct['landmarks']
-	#        data.append(landmarks)
 
-	
+        # If the data is not pre-aligned, aligner.the_real_aligner() should
+        # be run.
+
+	data = []
+	for im_struct in image_table:
+	        landmarks = im_struct['landmarks']
+	        data.append(landmarks)
+
+
 	principal_axis, comp_variance = pca.fit(data, mean, 0.95)
 
 	#print('95')
@@ -46,15 +48,13 @@ def construct():
 
 	return mean, var_matrix, principal_axis, comp_variance
 
-#construct()
-
 def image_search():
 	# asm_model, image):
 	image = cv2.imread('../data/leafscan/27.jpg', 0)
 	sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
 	sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
-	#laplacian = cv2.Laplacian(image,cv2.CV_64F) 
-	
+	#laplacian = cv2.Laplacian(image,cv2.CV_64F)
+
 	#cv2.imshow('image', sobelx)
 	#cv2.waitKey(0)
 	#cv2.imshow('image', sobely)
@@ -64,9 +64,9 @@ def image_search():
 	#cv2.imshow('image', sobely)
 	#cv2.waitKey(0)
 	#image2 = sobelx**2 + sobely**2
-	
+
 	#image_diff = abs(sobelx) + abs(sobely)
-	
+
 	#plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
 	#plt.subplot(2,2,1),plt.imshow(laplacian,cmap = 'gray')
 	#plt.subplot(2,2,2),plt.imshow(image_diff,cmap = 'gray')
@@ -89,7 +89,7 @@ def image_search():
 	temp_landmarks = mean # med noget init placering
 	temp_alignment_parameters = np.array((0,0,0,0)) # initial parameters should be something else than 0
 
-	# converges loop 
+	# converges loop
 	xes = temp_landmarks[::2]
 	yes = temp_landmarks[1::2]
 
@@ -106,7 +106,7 @@ def image_search():
 		line_left  = np.array((x-x_left, y-y_left))
 		line_right = np.array((x_right-x, y_right-y))
 
-		norm_left  = get_norm(line_left) 
+		norm_left  = get_norm(line_left)
 		norm_right = get_norm(line_right)
 		# norm_left and  norm_right are unit length
 		norm = (norm_left + norm_right) / 2
@@ -119,10 +119,10 @@ def image_search():
 			# x, y or y,x ?
 			norm_list.append((x_diff, y_diff, image_diff[x_diff][y_diff]))
 
-		# should maybe be min? 
+		# should maybe be min?
 		(x_diff, y_diff, pix_value) = max(norm_list,key=lambda item:item[2])
 
-		dX.append(x-x_diff) 
+		dX.append(x-x_diff)
 		dX.append(y-y_diff)
 
 	# align X o be as close to the new points as possible
@@ -145,6 +145,3 @@ def get_norm(coordinats):
 	# normalize the vectors
 	length_of_vector = math.sqrt(x**2+y**2)
 	return np.array((-y/length_of_vector, x/length_of_vector))
-
-	
-

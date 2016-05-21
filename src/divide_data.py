@@ -25,7 +25,7 @@ def split_training_test(number, path='../data/species_>'):
 
 	for key in species:
 		sublists = shuffle_and_partition(species[key])
-		# test is the first list -> if < 5 and if 5 is not divisible 
+		# test is the first list -> if < 5 and if 5 is not divisible
 		# test is between 20% and 33,3% of the whole set
 		test = sublists.pop(0)
 		# merge all other sublists
@@ -84,14 +84,14 @@ def list_duplicates(seq):
 #			os.rename('../data/train/' + file, '../data/train/' + file[8:])
 
 #split_training_test(2)
-print('number of files in leafscan :' +  str(len(os.listdir('../data/leafscan/'))))
-print('number of files in train    :' +  str(len(os.listdir('../data/train/'))))
-print('number of files in test     :' +  str(len(os.listdir('../data/test/')))) 
-move_all_files('../data/leafscan/', '../data/test/', '../data/train/', '../data/data_division.json')
+print('number of files in leafscan :' +  str(len(os.listdir('../../Data/leafscan/'))))
+print('number of files in train    :' +  str(len(os.listdir('../../Data/train/'))))
+print('number of files in test     :' +  str(len(os.listdir('../../Data/test/'))))
+move_all_files('../../Data/leafscan/', '../../Data/test/', '../../Data/train/', 'data_division.json')
 print('after split:')
-print('number of files in leafscan :' +  str(len(os.listdir('../data/leafscan/'))))
-print('number of files in train    :' +  str(len(os.listdir('../data/train/'))))
-print('number of files in test     :' +  str(len(os.listdir('../data/test/')))) 
+print('number of files in leafscan :' +  str(len(os.listdir('../../Data/leafscan/'))))
+print('number of files in train    :' +  str(len(os.listdir('../../Data/train/'))))
+print('number of files in test     :' +  str(len(os.listdir('../../Data/test/'))))
 
 #number of items in train ( species number >2): 10037
 #number of items in test ( species number >2): 2613
@@ -106,4 +106,4 @@ print('number of files in test     :' +  str(len(os.listdir('../data/test/'))))
 #number of files in leafscan :352
 #number of files in train    :20074
 #number of files in test     :5226
-# 20074 + 5226 = 25300 hurra! :D 
+# 20074 + 5226 = 25300 hurra! :D
