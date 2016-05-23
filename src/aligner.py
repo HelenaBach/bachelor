@@ -224,6 +224,7 @@ def the_real_aligner():
         mean = mean_shape()
         # check if prev_mean and mean is 'equal' - does the process converge
         diff = sum(abs(prev_mean-mean))
+        print('sum of diff: ' + str(diff))
         if diff < 50 or i == 9:
             print('sum of diff: ' + str(diff))
             return mean, var_matrix

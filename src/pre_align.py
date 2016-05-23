@@ -39,6 +39,8 @@ for im_struct in image_table:
         # update the image table
         im_struct['landmarks'] = landmarks
 
+with open('image_table_unaligned.p', 'wb') as f:
+        pickle.dump(image_table, f)
 
 # HUSK AT INDSÆTTE PRINT STATEMENTS NÅR DE STORE TRÆNINGSSÆT KØRES
 ## (SÅ VI HAR ET OVERBLIK OVER HVOR LANGT DET DER KØRER ER)
