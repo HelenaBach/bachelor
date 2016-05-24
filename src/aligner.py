@@ -3,6 +3,8 @@ import numpy as np
 import math
 from table import image_table
 import sys # debugging
+from functools import partial
+from multiprocessing import Pool 
 
 # Compute the V_R_kl of all distances
 # argument: image_table of all img_structs
@@ -180,11 +182,20 @@ def align_pair(shape2, x):
 # returns: var_matrix (kind of a hack)
 def align_all_shapes(mean_shape):
     var_matrix = compute_var_dist()
-    for img in image_table:
-        shape = img['landmarks']
-        x = solve_x(mean_shape, shape, var_matrix)
-        img['landmarks'] = align_pair(shape, x)
+    p = Pool(5)
+    func = partial(ting, mean_shape, var_matrix)
+    image_table = p.map(func, image_table)
+#    for img in image_table:
+#        shape = img['landmarks']
+#        x = solve_x(mean_shape, shape, var_matrix)
+#        img['landmarks'] = align_pair(shape, x)
     return var_matrix
+
+def ting(mean_shape, var_matrix, img):
+    shape = img['landmarks']
+    x = solve_x(mean_shape, shape, var_matrix)
+    img['landmarks'] = align_pair(shape, x)
+    return img
 
 # Calculate the mean shape from the aligned shapes
 # returns: the mean shape
