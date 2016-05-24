@@ -183,7 +183,7 @@ def align_pair(shape2, x):
 def align_all_shapes(mean_shape):
     var_matrix = compute_var_dist()
     p = Pool(5)
-    func = partial(ting, mean_shape, var_matrix)
+    func = partial(align_one_image, mean_shape, var_matrix)
     image_table = p.map(func, image_table)
 #    for img in image_table:
 #        shape = img['landmarks']
@@ -191,7 +191,7 @@ def align_all_shapes(mean_shape):
 #        img['landmarks'] = align_pair(shape, x)
     return var_matrix
 
-def ting(mean_shape, var_matrix, img):
+def align_one_image(mean_shape, var_matrix, img):
     shape = img['landmarks']
     x = solve_x(mean_shape, shape, var_matrix)
     img['landmarks'] = align_pair(shape, x)
