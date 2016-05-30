@@ -82,15 +82,18 @@ def image_search(asm_model, image):
 	old_suggested_image = image_x
 
 	# converges loop
-	while True: #not converges:
+	for i in range(20): # while True 
+
+	# HUSK AT SIKRER AT ALTING BLIVER GEMT HELE TIDEN - ALLZ THE TIME - WHATEVER U DO!
 
 		diff_image_x = adjustments_along_normals(image_x)
 		
+		# Test if we are trying to move to the same place as last time
 		suggested_image = image_x+diff_image_x
 		if suggested_image is old_suggested_image:
 			break
 		old_suggested_image = suggested_image
-		
+
 		# align X o be as close to the new points as possible
 		# alignment_parameters = a_x, a_y, t_x, t_y
 		diff_alignment_parameters = aligner.solve_x(image_x+diff_image_x, image_x, var_matrix)
