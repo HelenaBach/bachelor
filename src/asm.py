@@ -52,38 +52,19 @@ def construct():
         return mean, var_matrix, principal_axis, comp_variance
 
 def image_search(asm_model, image):
-	#image = cv2.imread('../data/leafscan/27.jpg', 0)
-	sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
-	sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
-	#laplacian = cv2.Laplacian(image,cv2.CV_64F)
-
-	#cv2.imshow('image', sobelx)
-	#cv2.waitKey(0)
-	#cv2.imshow('image', sobely)
-	#cv2.waitKey(0)
-	#cv2.imshow('image', image)
-	#cv2.waitKey(0)
-	#cv2.imshow('image', sobely)
-	#cv2.waitKey(0)
-	#image2 = sobelx**2 + sobely**2
-
-	#image_diff = abs(sobelx) + abs(sobely)
-
-	#plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
-	#plt.subplot(2,2,1),plt.imshow(laplacian,cmap = 'gray')
-	#plt.subplot(2,2,2),plt.imshow(image_diff,cmap = 'gray')
-	#plt.title('Differentiated image'), plt.xticks([]), plt.yticks([])
-	#plt.subplot(2,2,3),plt.imshow(sobelx,cmap = 'gray')
-	#plt.title('Sobel X'), plt.xticks([]), plt.yticks([])
-	#plt.subplot(2,2,4),plt.imshow(sobely,cmap = 'gray')
-	#plt.title('Sobel Y'), plt.xticks([]), plt.yticks([])
-	#
-	#plt.show()
 
 	mean, var_matrix, principal_axis, comp_variance = asm_model
 
+	#image = cv2.imread('../data/leafscan/27.jpg', 0)
+	
+	# mild smoothing of the image to reduce noise 
+	gaussian(image, sigma=0.4)
+
+	sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
+	sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
+
 	# diff the image
-	image_diff = abs(sobelx) + abs(sobely)
+	image_diff = np.round(sobelx**2 + sobely**2)
 
 	# initialise the dX array
 	diff_image_x = [] # NUMPY ARRAY ISTEDET FOR!!! XXX
@@ -98,11 +79,18 @@ def image_search(asm_model, image):
 	b = np.array((0))
 	b = np.tile(b, len(principal_axis))
 
+	old_suggested_image = image_x
+
 	# converges loop
 	while True: #not converges:
 
 		diff_image_x = adjustments_along_normals(image_x)
-
+		
+		suggested_image = image_x+diff_image_x
+		if suggested_image is old_suggested_image:
+			break
+		old_suggested_image = suggested_image
+		
 		# align X o be as close to the new points as possible
 		# alignment_parameters = a_x, a_y, t_x, t_y
 		diff_alignment_parameters = aligner.solve_x(image_x+diff_image_x, image_x, var_matrix)
@@ -165,7 +153,7 @@ def adjustments_along_normal(image_x):
 		norm = (norm_left + norm_right) / 2
 
 		norm_list = []
-		for i in range(-2, 3):
+		for i in range(-10, 11):
 			# round to nearest pixel coordinates
 			diff_x = int(round(x + i*norm[0]))
 			diff_y = int(round(y + i*norm[1]))
@@ -173,9 +161,21 @@ def adjustments_along_normal(image_x):
 			# x, y or y,x ?
 			norm_list.append((diff_x, diff_y, image_diff[diff_x][diff_y]))
 
-		# should maybe be min?
 		# choose the point with the highest value.
-		(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
+		#(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
+		sorted_norms = sorted(norm_list,key=lambda item:item[2], reverse=True)
+
+		best_guess = sorted_norms[0]
+		j = 1
+		while best_guess[2] == sorted_norms[j][2]:
+			best_diff = (x-best_guess[0])**2 + (y-best_guess[1])**2
+			new_diff = (x-sorted_norms[j][0])**2 + (y-sorted_norms[j][1])**2
+			if new_diff < best_diff:
+				best_guess = sorted_norms[j]
+			j += 1
+
+
+		diff_x, diff_y, pix_value = best_guess
 
 		diff_image_x[i*2]   = (x-diff_x)
 		diff_image_x[i*2+1] = (y-diff_y)
@@ -240,3 +240,17 @@ def skale_and_rotate(shape, s, theta):
         M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
 
     return M
+
+
+## HOW TO PLOT ALL THE PICTURES
+
+#plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
+	#plt.subplot(2,2,1),plt.imshow(laplacian,cmap = 'gray')
+	#plt.subplot(2,2,2),plt.imshow(image_diff,cmap = 'gray')
+	#plt.title('Differentiated image'), plt.xticks([]), plt.yticks([])
+	#plt.subplot(2,2,3),plt.imshow(sobelx,cmap = 'gray')
+	#plt.title('Sobel X'), plt.xticks([]), plt.yticks([])
+	#plt.subplot(2,2,4),plt.imshow(sobely,cmap = 'gray')
+	#plt.title('Sobel Y'), plt.xticks([]), plt.yticks([])
+	#
+	#plt.show()
