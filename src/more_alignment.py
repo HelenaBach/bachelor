@@ -10,6 +10,7 @@ import aligner
 import math
 import pickle
 import time # to print time of execution
+import numpy as np
 
 start_time = time.time()
 
@@ -17,15 +18,22 @@ with open('mean.p', 'rb') as f:
     mean = pickle.load(f)
 
 with open('image_table.p', 'rb') as f:
-    image_table = pickle.load(f)
+    old_image_table = pickle.load(f)
 
 with open('var_matrix.p', 'rb') as f:
     var_matrix = pickle.load(f)
 
-shape1 = np.copy(image_table[0]['landmarks'])
-# rotate, scale and translate each shape to align with the first shape
-# initial previous mean_shape - dummy 1x200 vector of zeros
-prev_mean = mean
+with open('image_table_unaligned.p', 'rb') as f:
+    unaligned_image_table = pickle.load(f)
+
+for img in old_image_table:
+    image_table.append(img)
+
+shape1 = np.copy(unaligned_image_table[0]['landmarks'])
+print(shape1)
+
+prev_mean = np.array((0))
+prev_mean = np.tile(prev_mean, 200)
 
 for i in range(100):
     print('aligner iteration: ' + str(i))

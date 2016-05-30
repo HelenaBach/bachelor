@@ -33,15 +33,22 @@ training_data = knn.construct()
 
 # get all images
 test_list = os.listdir(path_test)
-random.shuffle(test_list)
 
-test_images = test_list[:20]
+max_count = len(test_list)/2
+
+i = 1
+
+test_images = test_list
+
+# list of all test images and their predictions.
+image_results = {}
 
 k = 5
 # initialize the image table
 for test_image in test_images:
     # make sure we only test each image one time
     if test_image.endswith('.jpg'):
+        print(str(i) + 'of ' + str(max_count))
         # remove the ending of the image
         test_image = test_image[:-4]
 
@@ -64,12 +71,15 @@ for test_image in test_images:
         # get a sorted list of the class id and the number of votes
         label_candidates = knn.classify(training_data, image_features, k)
 
+        # save all label candidates and image_id in dict
+        image_results[test_image] = label_candidates
+
         # label_candidates[0][0] should give the classification
         label = label_candidates[0][0]
 
+        i += 1
         # check if the classification was right and
         # stats.do_shit(test_image, label)
-        print('test image:')
-        print(test_image)
-        print('label:')
-        print(label)
+
+with open('image_dict_labels.p', 'wb') as f:
+    pickle.dump(image_results, f)

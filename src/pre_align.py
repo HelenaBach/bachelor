@@ -47,11 +47,11 @@ with open('image_table_unaligned.p', 'wb') as f:
 # align the dataset
 mean, var_matrix = aligner.the_real_aligner()
 
-with open('image_table.p', 'wb') as f:
+with open('image_table_again.p', 'wb') as f:
         pickle.dump(image_table, f)
-with open('mean.p', 'wb') as f:
+with open('mean_again.p', 'wb') as f:
         pickle.dump(mean, f)
-with open('var_matrix.p', 'wb') as f:
+with open('var_matrix_again.p', 'wb') as f:
         pickle.dump(var_matrix, f)
 
 print("--- %s seconds ---" % (time.time() - start_time))

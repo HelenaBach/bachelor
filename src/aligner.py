@@ -4,7 +4,7 @@ import math
 from table import image_table
 import sys # debugging
 from functools import partial
-from multiprocessing import Pool 
+from multiprocessing import Pool
 
 # Compute the V_R_kl of all distances
 # argument: image_table of all img_structs
@@ -184,8 +184,11 @@ def align_all_shapes(mean_shape):
     var_matrix = compute_var_dist()
     p = Pool(5)
     func = partial(align_one_image, mean_shape, var_matrix)
-    image_table = p.map(func, image_table)
-#    for img in image_table:
+   # print(image_table[0]['landmarks'])
+    updated_image_table = p.map(func, image_table)
+    for i in range(len(updated_image_table)):
+        image_table[i] = updated_image_table[i]
+ #    for img in image_table:
 #        shape = img['landmarks']
 #        x = solve_x(mean_shape, shape, var_matrix)
 #        img['landmarks'] = align_pair(shape, x)
@@ -230,13 +233,13 @@ def the_real_aligner():
     # initial previous mean_shape - dummy 1x200 vector of zeros
     prev_mean = np.array((0))
     prev_mean = np.tile(prev_mean, 200)
-    for i in range(10):
+    for i in range(100):
         print('aligner iteration: ' + str(i))
         mean = mean_shape()
         # check if prev_mean and mean is 'equal' - does the process converge
         diff = sum(abs(prev_mean-mean))
         print('sum of diff: ' + str(diff))
-        if diff < 50 or i == 9:
+        if diff < 100 or i == 99:
             print('sum of diff: ' + str(diff))
             return mean, var_matrix
         new_mean = normalize_mean(shape1, mean, var_matrix)

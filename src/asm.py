@@ -4,7 +4,7 @@ import numpy as np
 import sys # debugging
 from matplotlib import pyplot as plt
 from table import image_table
-import math # squareroot 
+import math # squareroot
 import aligner
 import parser
 import pickle
@@ -13,48 +13,50 @@ import pca
 
 
 def construct():
-	with open('mean.p', 'rb') as f:
-	    mean = pickle.load(f)
+        with open('mean_more.p', 'rb') as f:
+                mean = pickle.load(f)
 
-	with open('image_table.p', 'rb') as f:
-	    data = pickle.load(f)
+        with open('image_table_more.p', 'rb') as f:
+                old_image_table = pickle.load(f)
 
-	with open('var_matrix.p', 'rb') as f:
-	    var_matrix = pickle.load(f)
+        with open('var_matrix_more.p', 'rb') as f:
+                var_matrix = pickle.load(f)
 
         # If the data is not pre-aligned, aligner.the_real_aligner() should
         # be run.
 
-	data = []
-	for im_struct in image_table:
-	        landmarks = im_struct['landmarks']
-	        data.append(landmarks)
+        for img in old_image_table:
+                image_table.append(img)
 
+        data = []
+        for im_struct in image_table:
+                landmarks = im_struct['landmarks']
+                data.append(landmarks)
 
-	principal_axis, comp_variance = pca.fit(data, mean, 0.95)
+        principal_axis, comp_variance = pca.fit(data, mean, 0.95)
 
 	#print('95')
-#	#print(len(principal_axis))
-#
+        #	#print(len(principal_axis))
+        #
 	#principal_axis, comp_variance = pca.fit(data, mean, 0.975)
-	#print('97.5')
-	#print(len(principal_axis))
+        #print('97.5')
+        #print(len(principal_axis))
 
-	for im_struct in image_table:
-		# mean centred shape
-		shape = im_struct['landmarks'] - mean
+        for im_struct in image_table:
+                # mean centred shape
+                shape = im_struct['landmarks'] - mean
 
-		# translate data into PCA space
-		im_struct['feature_vector'] = np.dot(principal_axis, shape)
+                # translate data into PCA space
+                im_struct['feature_vector'] = np.dot(principal_axis, shape)
 
-	return mean, var_matrix, principal_axis, comp_variance
+        return mean, var_matrix, principal_axis, comp_variance
 
 def image_search(asm_model, image):
 	#image = cv2.imread('../data/leafscan/27.jpg', 0)
 	sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
 	sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
-	#laplacian = cv2.Laplacian(image,cv2.CV_64F) 
-	
+	#laplacian = cv2.Laplacian(image,cv2.CV_64F)
+
 	#cv2.imshow('image', sobelx)
 	#cv2.waitKey(0)
 	#cv2.imshow('image', sobely)
@@ -66,7 +68,7 @@ def image_search(asm_model, image):
 	#image2 = sobelx**2 + sobely**2
 
 	#image_diff = abs(sobelx) + abs(sobely)
-	
+
 	#plt.title('Laplacian'), plt.xticks([]), plt.yticks([])
 	#plt.subplot(2,2,1),plt.imshow(laplacian,cmap = 'gray')
 	#plt.subplot(2,2,2),plt.imshow(image_diff,cmap = 'gray')
@@ -83,8 +85,8 @@ def image_search(asm_model, image):
 	# diff the image
 	image_diff = abs(sobelx) + abs(sobely)
 
-	# initialise the dX array 
-	diff_image_x = [] # NUMPY ARRAY ISTEDET FOR!!! XXX 
+	# initialise the dX array
+	diff_image_x = [] # NUMPY ARRAY ISTEDET FOR!!! XXX
 
 	# The landmarks within the model
 	model_x = mean # med noget init placering
@@ -96,25 +98,25 @@ def image_search(asm_model, image):
 	b = np.array((0))
 	b = np.tile(b, len(principal_axis))
 
-	# converges loop 
+	# converges loop
 	while True: #not converges:
-		
+
 		diff_image_x = adjustments_along_normals(image_x)
-	
+
 		# align X o be as close to the new points as possible
 		# alignment_parameters = a_x, a_y, t_x, t_y
 		diff_alignment_parameters = aligner.solve_x(image_x+diff_image_x, image_x, var_matrix)
-	
+
 		diff_s, diff_theta, diff_t_x, diff_t_y = get_skale_rotation_translation(diff_alignment_parameters)
-		
+
 
 		# calculate new s, theta, t_x, t_y
 		alignment_parameters = update_parameters(alignment_parameters, diff_s, diff_theta, diff_t_x, diff_t_y)
 
-		# create X_c matrix after updating parameters X_c = X_c + dX_c 
+		# create X_c matrix after updating parameters X_c = X_c + dX_c
 		length = int(len(X)/2)
 		image_x_c =  get_translation(alignment_parameters[2], alignment_parameters[3], length)
-		
+
 		# y from eq. 19
 		y = image_x + diff_image_x - image_x_c
 
@@ -124,7 +126,7 @@ def image_search(asm_model, image):
 
 		#apply the shape contraints and approximate new model parameter x + dx
 
-		# x + dx ~ mean + P*(b+db) <- allowable shape 
+		# x + dx ~ mean + P*(b+db) <- allowable shape
 		# db = P^t * dx
 		# x + dx ~ mean + P*(b+P^t * dx)
 		# new b = b+db = b + P^t * dx
@@ -142,11 +144,11 @@ def adjustments_along_normal(image_x):
 
 	xes = image_x[::2]
 	yes = image_x[1::2]
-	
-	# find dX 
+
+	# find dX
 	for i in range(len(xes)):
 		x = xes[i]
-		y = yes[i]                                                                
+		y = yes[i]
 		x_left = xes[i-1]
 		y_left = yes[i-1]
 		# wrap around
@@ -157,7 +159,7 @@ def adjustments_along_normal(image_x):
 		line_left  = np.array((x-x_left, y-y_left))
 		line_right = np.array((x_right-x, y_right-y))
 
-		norm_left  = get_norm(line_left) 
+		norm_left  = get_norm(line_left)
 		norm_right = get_norm(line_right)
 		# norm_left and  norm_right are unit length
 		norm = (norm_left + norm_right) / 2
@@ -175,9 +177,9 @@ def adjustments_along_normal(image_x):
 		# choose the point with the highest value.
 		(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
 
-		diff_image_x[i*2]   = (x-diff_x) 
+		diff_image_x[i*2]   = (x-diff_x)
 		diff_image_x[i*2+1] = (y-diff_y)
-	
+
 	return diff_image_x
 
 
@@ -189,7 +191,7 @@ def get_norm(coordinats):
 	length_of_vector = math.sqrt(x**2+y**2)
 	return np.array((-y/length_of_vector, x/length_of_vector))
 
-	
+
 def get_skale_rotation_translation(alignment_parameters):
 	a_x = alignment_parameters[0] # s cos theta
 	a_y = alignment_parameters[1] # s sin theta
@@ -199,14 +201,14 @@ def get_skale_rotation_translation(alignment_parameters):
 	# obtain the suggested skale and rotation:
 	# a_x = s * cos(theta), a_y = s * sin(theta)
 	# cos(theta)^2 + sin(theta)^2 = 1 (unit circle and pythagoras)
-	# s will be the length of a_x + a_y. 
-	ds = math.sqrt(a_x**2 + a_y**2) 
+	# s will be the length of a_x + a_y.
+	ds = math.sqrt(a_x**2 + a_y**2)
 	dtheta =  math.degrees(math.acos(a_x/ds))
 	return (ds, dtheta, t_x, t_y)
 
 
 def get_translation(t_x, t_y, length):
-    
+
     t = np.array([t_x,t_y])
     # create vector t (translation) of same length as the shape
     # with t_x, t_y repeated
@@ -214,8 +216,8 @@ def get_translation(t_x, t_y, length):
     return t
 
 def update_parameters(alignment_parameters, diff_s, diff_theta, diff_t_x, diff_t_y):
-	s     = alignment_parameters[0] 
-	theta = alignment_parameters[1] 
+	s     = alignment_parameters[0]
+	theta = alignment_parameters[1]
 	t_x   = alignment_parameters[2]
 	t_y   = alignment_parameters[3]
 
