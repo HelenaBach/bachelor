@@ -15,10 +15,10 @@ import random # test knn
 import numpy as np
 
 try:
-        path_test = sys.argv[1]
+	path_test = sys.argv[1]
 except:
-        print('The path of the test image directory should be passed as argument to this script')
-        sys.exit(2)
+	print('The path of the test image directory should be passed as argument to this script')
+	sys.exit(2)
 
 # update feature vectors in image table
 # returns the mean shape, var_matrix, the principal axis and
@@ -48,15 +48,15 @@ image_results = {}
 k = 5
 
 for test_image in test_images:
-        if test_image.endswith('.xml'):
-                im_struct = parser.init_image(path_test, test_image)
-                test_table.append(im_struct)
+	if test_image.endswith('.xml'):
+		im_struct = parser.init_image(path_test, test_image)
+		test_table.append(im_struct)
 
-    # make sure we only test each image one time
-    if test_image.endswith('.jpg'):
-            print(str(i) + 'of ' + str(max_count))
-            # remove the ending of the image
-            test_image = test_image[:-4]
+	# make sure we only test each image one time
+	if test_image.endswith('.jpg'):
+		print(str(i) + 'of ' + str(max_count))
+		# remove the ending of the image
+		test_image = test_image[:-4]
 
         gray_image = parser.get_grayscale(path_test, test_image)
         # get image features
@@ -88,15 +88,10 @@ for test_image in test_images:
         # check if the classification was right and
         # stats.do_shit(test_image, label)
 
-    test_table[-1]['landmarks'] = landmarks
+	test_table[-1]['landmarks'] = landmarks
     test_table[-1]['feature_vector'] = image_features
 
 with open('image_dict_labels.p', 'wb') as f:
-        pickle.dump(image_results, f)
-        with open('test_table.p', 'wb') as f:
-                pickle.dump(test_table, f)
-
-def kjæs:
-        if kod is done:
-                break
-                return lolle
+	pickle.dump(image_results, f)
+with open('test_table.p', 'wb') as f:
+	pickle.dump(test_table, f)
