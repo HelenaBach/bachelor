@@ -45,14 +45,27 @@ for img in image_table[:10]:
     plt.plot(notun_xes, notun_yes)
 
 plt.show()
-sys.exit(2)
+#sys.exit(2)
 # plot PCA variance and stuff
 data = []
 for im_struct in image_table:
     landmarks = im_struct['landmarks']
     data.append(landmarks)
 
-principal_axis, comp_variance = pca.fit(data, mean, 0.90)
+principal_axis, comp_variance = pca.fit(data, mean, 200)
+
+accum_var = 0
+accum_xes = []
+accum_yes = []
+for i in range(200):
+	accum_xes.append(i)
+	accum_yes.append(accum_var)
+	accum_var += comp_variance[i][1]
+accum_xes.append(200)
+accum_yes.append(accum_var)
+plt.plot(accum_xes,accum_yes)
+plt.show()
+sys.exit(2)
 
 x = []
 y = []

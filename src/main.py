@@ -58,7 +58,7 @@ for test_image in test_images:
 		# remove the ending of the image
 		test_image = test_image[:-4]
 
-        gray_image = parser.get_grayscale(path_test, test_image)
+		gray_image = parser.get_grayscale(path_test, test_image)
         # get image features
 
         # TESTER DET ER DUMT
@@ -72,26 +72,26 @@ for test_image in test_images:
         # NU TESTER VI IKKE MERE
 
         # return a feature vector + landmarks XXXXXXXXX MÅSKE??? XXXXXX
-        image_features, landmarks = asm.image_search(asm_model, gray_image, test_image)
+		image_features, landmarks = asm.image_search(asm_model, gray_image)
 
         # classify new image from training data
         # get a sorted list of the class id and the number of votes
-        label_candidates = knn.classify(training_data, image_features, k)
+		label_candidates = knn.classify(training_data, image_features, k)
 
         # save all label candidates and image_id in dict
-        image_results[test_image] = label_candidates
+		image_results[test_image] = label_candidates
 
         # label_candidates[0][0] should give the classification
-        label = label_candidates[0][0]
+		label = label_candidates[0][0]
 
-        i += 1
+		i += 1
         # check if the classification was right and
         # stats.do_shit(test_image, label)
 
-	test_table[-1]['landmarks'] = landmarks
-    test_table[-1]['feature_vector'] = image_features
+		test_table[-1]['landmarks'] = landmarks
+		test_table[-1]['feature_vector'] = image_features
 
-with open('image_dict_labels.p', 'wb') as f:
+with open('image_dict_labels_with_seg.p', 'wb') as f:
 	pickle.dump(image_results, f)
 with open('test_table.p', 'wb') as f:
 	pickle.dump(test_table, f)

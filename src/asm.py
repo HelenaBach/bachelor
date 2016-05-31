@@ -3,6 +3,7 @@ import numpy as np
 #import math
 import sys # debugging
 from matplotlib import pyplot as plt
+from skimage.filters import gaussian
 from table import image_table
 import math # squareroot
 import aligner
@@ -64,15 +65,15 @@ def image_search(asm_model, image):
 	# diff the image
 	image_diff = np.round(sobelx**2 + sobely**2)
 
-	# initialise the dX array
-	#diff_image_x = [] # NUMPY ARRAY ISTEDET FOR!!! XXX
-	# HVORFOR SKAL DET VÆRE ET NUMPY ARRAY ISTEDET FOR ????? XXXXX
-	diff_image_x = np.array((0))
-	diff_image_x = np.tile(diff_image_x, len(image_x))
 	# The landmarks within the model
 	model_x = mean # med noget init placering
 	# the landmarks within the image
 	image_x = model_x
+
+	# initialise the dX array
+	diff_image_x = np.array((0))
+	diff_image_x = np.tile(diff_image_x, len(image_x))
+
 	# initial parameters. s, theta, t_x, t_y
 	alignment_parameters = np.array((1,0,0,0))
 	# initial b vector
@@ -84,7 +85,7 @@ def image_search(asm_model, image):
 	# converges loop
 	for i in range(100): # while True
 		# HUSK AT SIKRER AT ALTING BLIVER GEMT HELE TIDEN - ALLZ THE TIME - WHATEVER U DO!
-		diff_image_x = adjustments_along_normals(image_x)
+		diff_image_x = adjustments_along_normal(image_x, image_diff)
 		# Test if we are trying to move to the same place as last time
 		suggested_image = image_x+diff_image_x
 		if (suggested_image is old_suggested_image) or i == 99:
@@ -129,7 +130,7 @@ def image_search(asm_model, image):
 
 	return feature_vector, model_x #VI ER ENIGE OM AT MODEL_X ER LANDMARKS?? XXXXXXXX
 
-def adjustments_along_normal(image_x):
+def adjustments_along_normal(image_x, image_diff):
 	diff_image_x = np.array((0))
 	diff_image_x = np.tile(diff_image_x, len(image_x))
 
@@ -156,19 +157,26 @@ def adjustments_along_normal(image_x):
 		norm = (norm_left + norm_right) / 2
 
 		norm_list = []
-		for i in range(-10, 11):
+		for i in range(-20, 21):
 			# round to nearest pixel coordinates
 			diff_x = int(round(x + i*norm[0]))
 			diff_y = int(round(y + i*norm[1]))
 
 			# x, y or y,x ?
 			norm_list.append((diff_x, diff_y, image_diff[diff_x][diff_y]))
-
+		print('norm_list:', norm_list)
+		print(image_diff)
+		#for i in range(len(image_diff)):
+		#	for j in range(len(image_diff[0])):
+		#		if (image_diff[i][j] != 0.0):
+		#			print('DIFFIE: ', image_diff[i][j])
+		print('FÆRDIG')
 		# choose the point with the highest value.
 		#(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
 		sorted_norms = sorted(norm_list,key=lambda item:item[2], reverse=True)
-
+		print(sorted_norms)
 		best_guess = sorted_norms[0]
+		print(best_guess)
 		j = 1
 		while best_guess[2] == sorted_norms[j][2]:
 			best_diff = (x-best_guess[0])**2 + (y-best_guess[1])**2
@@ -229,10 +237,10 @@ def skale_and_rotate(shape, s, theta):
 	a_x = s * math.cos(theta)
 	a_y = s * math.sin(theta)
 
-    M = np.copy(shape)
+	M = np.copy(shape)
     #print(M)
     # rotate and scale shape2 (now know as M)
-    for k in range(0,n):
+	for k in range(0,n):
 		M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
 		M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
 
