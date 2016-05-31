@@ -30,7 +30,7 @@ def landmark_setter(image, gray_image): # gray_image
 	contour = []
 	max_len = 0
 	for con in contours:
-		if max_len < len(con):
+        if max_len < len(con):
 			max_len = len(con)
 			contour = con
 	# want to uniformly place 100 point along the contour
