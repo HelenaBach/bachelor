@@ -30,6 +30,8 @@ asm_model = mean, var_matrix, principal_axis, components
 # return list of feature vectores from image table
 training_data = knn.construct()
 
+# Table like image_table but for the test images.
+test_table = []
 
 # get all images
 test_list = os.listdir(path_test)
@@ -44,28 +46,33 @@ test_images = test_list
 image_results = {}
 
 k = 5
-# initialize the image table
+
 for test_image in test_images:
+        if test_image.endswith('.xml'):
+                im_struct = parser.init_image(path_test, test_image)
+                test_table.append(im_struct)
+
     # make sure we only test each image one time
     if test_image.endswith('.jpg'):
-        print(str(i) + 'of ' + str(max_count))
-        # remove the ending of the image
-        test_image = test_image[:-4]
+            print(str(i) + 'of ' + str(max_count))
+            # remove the ending of the image
+            test_image = test_image[:-4]
 
         gray_image = parser.get_grayscale(path_test, test_image)
         # get image features
 
-        # return a feature vector
         # TESTER DET ER DUMT
         # gør Otsu agtige ting
-        binary = segmentation.otsu(gray_image)
+        #binary = segmentation.otsu(gray_image)
         # set landmarks
-        landmarks_temp = segmentation.landmark_setter(binary, gray_image)
-        x = aligner.solve_x(mean, landmarks_temp, var_matrix)
-        aligned_landmarks = aligner.align_pair(landmarks_temp, x)
-        image_features = np.dot(principal_axis, aligned_landmarks-mean)
+        #landmarks_temp = segmentation.landmark_setter(binary, gray_image)
+        #x = aligner.solve_x(mean, landmarks_temp, var_matrix)
+        #aligned_landmarks = aligner.align_pair(landmarks_temp, x)
+        #image_features = np.dot(principal_axis, aligned_landmarks-mean)
         # NU TESTER VI IKKE MERE
-        #image_features = asm.image_search(asm_model, gray_image)
+
+        # return a feature vector + landmarks XXXXXXXXX MÅSKE??? XXXXXX
+        image_features, landmarks = asm.image_search(asm_model, gray_image, test_image)
 
         # classify new image from training data
         # get a sorted list of the class id and the number of votes
@@ -81,5 +88,15 @@ for test_image in test_images:
         # check if the classification was right and
         # stats.do_shit(test_image, label)
 
+    test_table[-1]['landmarks'] = landmarks
+    test_table[-1]['feature_vector'] = image_features
+
 with open('image_dict_labels.p', 'wb') as f:
-    pickle.dump(image_results, f)
+        pickle.dump(image_results, f)
+        with open('test_table.p', 'wb') as f:
+                pickle.dump(test_table, f)
+
+def kjæs:
+        if kod is done:
+                break
+                return lolle
