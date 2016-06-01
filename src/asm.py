@@ -76,11 +76,21 @@ def image_search(asm_model, image):
 #
 #    if max_width > image[0] or max(mean_xes) > 
     # The landmarks within the model
-    model_x = mean * 0.4 # med noget init placering
+    model_x = np.copy(mean * 0.4) # med noget init placering
     # the landmarks within the image
-    image_x = model_x
-
+    image_x = np.copy(mean * 0.4)
     # initialise the dX array
+    
+    with open('15252_landmarks.p', 'rb') as f:
+        landmarks_15252 = pickle.load(f)
+    model_x = np.copy(landmarks_15252)
+    image_x = np.copy(landmarks_15252)
+
+    img_xes = image_x[::2]
+    img_yes = image_x[1::2]
+    plt.plot(img_xes, img_yes)
+    plt.show()
+
     diff_image_x = np.array((0))
     diff_image_x = np.tile(diff_image_x, len(image_x))
 
@@ -95,10 +105,10 @@ def image_search(asm_model, image):
     old_suggested_image = image_x
 
     # converges loop
-    for i in range(100): # while True
+    for i in range(5): # while True
         
-        # place all point in the image
-        image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
+        # place all point in the image                  x                 y
+        #image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
 
         # HUSK AT SIKRER AT ALTING BLIVER GEMT HELE TIDEN - ALLZ THE TIME - WHATEVER U DO!
         diff_image_x = adjustments_along_normal(image_x, image_diff)
@@ -132,27 +142,44 @@ def image_search(asm_model, image):
 
         #apply the shape contraints and approximate new model parameter x + dx
 
-        # x + dx ~ mean + P*(b+db) <- allowable shape
-        # db = P^t * dx
-        # x + dx ~ mean + P*(b+P^t * dx)
-        # new b = b+db = b + P^t * dx
+        # 0: x + dx ~ mean + P*(b+db) <- allowable shape
+        # 1: db = P^t * dx
+        # 2: x + dx ~ mean + P*(b+P^t * dx)
+        # 3: new b = b+db = b + P^t * dx
+        # obs! PC's is 'transposed' so inverse the transposion
 
+        # update b (3)
         b = b + np.dot(principal_axis, diff_model_x)
-        # XXX THESE ARE TURNED AROUND? NOR AUEW IF IT IS RIGHT? 
-#		pca_x = np.dot(principal_axis, b)
-        pca_x = np.dot(b, principal_axis)
+
+        # b coordinats in the model space
+        pca_x = np.dot(np.array(principal_axis).transpose(), b)
+#        pca_x = np.dot(b, principal_axis)
+        # approximate x (0) 
         model_x = mean + pca_x
+
+        #img_xes = image_x[::2]
+        #img_yes = image_x[1::2]
+        #plt.plot(img_xes, img_yes)
 
         image_x = skale_and_rotate(model_x, alignment_parameters[0], alignment_parameters[1]) + image_x_c
 
-    feature_vector = np.dot(principal_axis, model_x)
+        img_xes = image_x[::2]
+        img_yes = image_x[1::2]
+        plt.plot(img_xes, img_yes)
+        #axes = plt.gca()
+        #axes.set_xlim([xmin,xmax])
+        #axes.set_ylim([ymin,ymax])
+        plt.show()
+
+    # b = P^T(x-mean)
+    feature_vector = np.dot(principal_axis, (model_x-mean))
 
     return feature_vector, model_x #VI ER ENIGE OM AT MODEL_X ER LANDMARKS?? XXXXXXXX
 
 def adjustments_along_normal(image_x, image_diff):
     # image_diff[0] = x
     # image_diff = y
-    diff_image_x = np.array((0))
+    diff_image_x = np.array((0.0))
     diff_image_x = np.tile(diff_image_x, len(image_x))
 
     xes = image_x[::2]
@@ -173,6 +200,7 @@ def adjustments_along_normal(image_x, image_diff):
         # if something is weird - LOOK HERE!
         if x-x_left == 0 and y-y_left == 0:
             print('line left is zero. x: ', x, ' y: ', y)
+            print(image_x)
 
         if x_right-x == 0 and y_right-y == 0:
             print('line right is zero. x: ', x, ' y: ', y)
@@ -188,20 +216,22 @@ def adjustments_along_normal(image_x, image_diff):
 
         norm_list = []
         print('index: x= ', x, ' y= ', y)
-        for i in range(-200, 200):
+        for j in range(-20, 21):
             # round to nearest pixel coordinates
-            diff_x = int(round(x + i*norm[0]))
-            diff_y = int(round(y + i*norm[1]))
+            diff_x = x + j*norm[0]
+            diff_y = y + j*norm[1]
 
             # 0 indx? 
             # image_diff[0] = x
             # image_diff = y
-            if diff_x < len(image_diff[0]) and diff_y < len(image_diff) and diff_x >= 0 and diff_y >= 0:
-                # x, y or y,x ?
-                norm_list.append((diff_x, diff_y, image_diff[diff_y][diff_x]))
-            #else: 
-            #    print('index: diff_x= ', diff_x, 'diff_y= ', diff_y)
-        
+            if diff_x > len(image_diff[0])-1 or diff_x < 0 or \
+               diff_y > len(image_diff)-1    or diff_y < 0:
+                diff_value = -1
+            else:
+                diff_value = image_diff[int(round(diff_y))][int(round(diff_x))]
+
+            norm_list.append((diff_x, diff_y, diff_value))
+      
         #print('norm_list:', norm_list)
         #print(image_diff)
         #for i in range(len(image_diff)):
@@ -211,13 +241,13 @@ def adjustments_along_normal(image_x, image_diff):
         # choose the point with the highest value.
         #(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
         sorted_norms = sorted(norm_list,key=lambda item:item[2], reverse=True)
-        if not sorted_norms:
-            print('no sorted norms')
-            print('index: x= ', x, ' y= ', y)
-            print('index: diff_x= ', diff_x, ' diff_y= ', diff_y)
-            print('dimensions of image:', len(image_diff), ', ', len(image_diff[0]))
 
+        if x > len(image_diff[0])-1 or x < 0 or\
+           y > len(image_diff)-1    or y < 0:
+            print('sorted norms:' , sorted_norms)
         best_guess = sorted_norms[0]
+        #sorted_norms[1] = (127, 33, 58888.0)
+        #sorted_norms[2] = (128, 30, 58888.0)
         #print(best_guess) 
         j = 1
         while  j < len(sorted_norms) and best_guess[2] == sorted_norms[j][2]:
@@ -226,12 +256,17 @@ def adjustments_along_normal(image_x, image_diff):
             if new_diff < best_diff:
                 best_guess = sorted_norms[j]
             j += 1
+        print('best guess: ',best_guess)
 
-        diff_x, diff_y, pix_value = best_guess
-        print('chosen: diff_x= ', diff_x, ' diff_y= ', diff_y)
-        diff_image_x[i*2]   = (x-diff_x)/2
-        diff_image_x[i*2+1] = (y-diff_y)/2
-
+        diff_x_best, diff_y_best, pix_value_best = best_guess
+        #print('chosen: diff_x= ', diff_x, ' diff_y= ', diff_y)
+        #print('simple math:', 128.045957-128)
+        diff_image_x[i*2]   = (x-diff_x_best)
+        diff_image_x[i*2+1] = (y-diff_y_best)
+        #print('j:', j)
+        #print('dX x: ', diff_image_x[i*2])
+        #print('dX x: ', diff_image_x[i*2+1])
+        #sys.exit()
     return diff_image_x
 
 def get_norm(coordinats):
@@ -284,7 +319,7 @@ def skale_and_rotate(shape, s, theta):
 
 	M = np.copy(shape)
     #print(M)
-    # rotate and scale shape2 (now know as M)
+    # rotate and scale shape (now know as M)
 	for k in range(0,int(len(shape)/2)):
 		M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
 		M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
