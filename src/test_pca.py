@@ -65,12 +65,12 @@ accum_xes.append(200)
 accum_yes.append(accum_var)
 plt.plot(accum_xes,accum_yes)
 plt.show()
-sys.exit(2)
+#sys.exit(2)
 
 x = []
 y = []
 z = []
-for im_struct in image_table:
+'''for im_struct in image_table:
     # mean centred shape
     shape = im_struct['landmarks'] - mean
 
@@ -89,7 +89,7 @@ ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 
 plt.show()
-sys.exit(2)
+sys.exit(2)'''
 for j in range(len(principal_axis)):
     plt.plot(xes, yes)
     print(math.sqrt(comp_variance[j][0]))
