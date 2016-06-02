@@ -77,4 +77,4 @@ def get_binary(path, file):
 	    	sys.exit(3)
 	    # gør Otsu agtige ting
 	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU)
-	return
+	return ret
