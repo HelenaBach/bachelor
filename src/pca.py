@@ -19,8 +19,8 @@ def fit(data, mean, dim):
 	eigen_pair = []
 	# for each eigenvector, find eigenvalue
 	for i in range(len(eigenvector_matrix)):
-		# eigenvalue is lambda_i = K_ii^2 / N, N = len(K) => K = N x D matrix
-		eigenvalue = k[i]**2/len(k)
+		# eigenvalue is lambda_i = K_ii^2 / N, N = len(U) => K = N x N matrix
+		eigenvalue = k[i]**2/len(U)
 		eigen_pair.append((eigenvalue, eigenvector_matrix[i]))
 
 	# sort according to the eigenvalue (in place)
