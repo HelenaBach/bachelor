@@ -76,18 +76,30 @@ def image_search(asm_model, image):
 #
 #    if max_width > image[0] or max(mean_xes) > 
     # The landmarks within the model
-    model_x = mean * 0.4 # med noget init placering
+    model_x = np.copy(mean ) # med noget init placering
     # the landmarks within the image
-    image_x = model_x
-
+    image_x = np.copy(mean )
     # initialise the dX array
-    diff_image_x = np.array((0))
+    
+    #with open('15252_landmarks.p', 'rb') as f:
+    #    landmarks_15252 = pickle.load(f)
+    #model_x = np.copy(landmarks_15252)
+    #image_x = np.copy(landmarks_15252)
+
+    img_xes = image_x[::2]
+    img_yes = image_x[1::2]
+    plt.plot(img_xes, img_yes)
+    plt.show()
+
+    diff_image_x = np.array((0.0))
     diff_image_x = np.tile(diff_image_x, len(image_x))
 
     # initial parameters. s, theta, t_x, t_y
-    alignment_parameters = np.array((1,0,0,0))
+    len_y = np.size(diff_image_x)/2
+    len_x = np.size(diff_image_x[0])/2
+    alignment_parameters = np.array((0.4, 0.0, float(len_x), float(len_y) ))
     # initial b vector
-    b = np.array((0))
+    b = np.array((0.0))
     b = np.tile(b, len(principal_axis))
 
     # used to check for significant changes in the suggested movement
@@ -95,10 +107,10 @@ def image_search(asm_model, image):
     old_suggested_image = image_x
 
     # converges loop
-    for i in range(100): # while True
+    for i in range(20): # while True
         
-        # place all point in the image
-        image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
+        # place all point in the image                  x                 y
+        #image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
 
         # HUSK AT SIKRER AT ALTING BLIVER GEMT HELE TIDEN - ALLZ THE TIME - WHATEVER U DO!
         diff_image_x = adjustments_along_normal(image_x, image_diff)
@@ -128,31 +140,67 @@ def image_search(asm_model, image):
 
         # suggested movements of the points in the model space
         # dx = M((s(1+ds))^-1, -(theta + dtheta)) [y] - x
-        diff_model_x = skale_and_rotate(y, math.pow(alignment_parameters[0], -1), -alignment_parameters[1]) - model_x
+        inverted_theta = alignment_parameters[1] * -1
+        inverted_s = math.pow(alignment_parameters[0], -1)
+        diff_model_x = skale_and_rotate(y, inverted_s, inverted_theta) - model_x
 
         #apply the shape contraints and approximate new model parameter x + dx
 
-        # x + dx ~ mean + P*(b+db) <- allowable shape
-        # db = P^t * dx
-        # x + dx ~ mean + P*(b+P^t * dx)
-        # new b = b+db = b + P^t * dx
+        # 0: x + dx ~ mean + P*(b+db) <- allowable shape
+        # 1: db = P^t * dx
+        # 2: x + dx ~ mean + P*(b+P^t * dx)
+        # 3: new b = b+db = b + P^t * dx
+        # obs! PC's is 'transposed' so inverse the transposion
 
+        # update b (3)
         b = b + np.dot(principal_axis, diff_model_x)
-        # XXX THESE ARE TURNED AROUND? NOR AUEW IF IT IS RIGHT? 
-#		pca_x = np.dot(principal_axis, b)
-        pca_x = np.dot(b, principal_axis)
+        
+        # limit b to be 3 standard deviations from the mean (eq 15)
+        for k in range(len(b)):
+            if b[k] > 3 * math.sqrt(comp_variance[k][0]):
+                b[k] = 3 * math.sqrt(comp_variance[k][0])
+
+            if b[k] < (-3) * math.sqrt(comp_variance[k][0]):
+                b[k] = (-3) * math.sqrt(comp_variance[k][0])
+
+
+
+        # b coordinats in the model space
+        pca_x = np.dot(np.array(principal_axis).transpose(), b)
+#        pca_x = np.dot(b, principal_axis)
+        # approximate x (0) 
         model_x = mean + pca_x
+
+
+        mod_xes = model_x[::2]
+        mod_yes = model_x[1::2]
+        plt.plot(mod_xes, mod_yes)
+        plt.show()
+
+
+        img_xes = image_x[::2]
+        img_yes = image_x[1::2]
+        plt.plot(img_xes, img_yes)
 
         image_x = skale_and_rotate(model_x, alignment_parameters[0], alignment_parameters[1]) + image_x_c
 
-    feature_vector = np.dot(principal_axis, model_x)
+        img_xes = image_x[::2]
+        img_yes = image_x[1::2]
+        plt.plot(img_xes, img_yes)
+        #axes = plt.gca()
+        #axes.set_xlim([xmin,xmax])
+        #axes.set_ylim([ymin,ymax])
+        plt.show()
+
+    # b = P^T(x-mean)
+    feature_vector = np.dot(principal_axis, (model_x-mean))
 
     return feature_vector, model_x #VI ER ENIGE OM AT MODEL_X ER LANDMARKS?? XXXXXXXX
 
 def adjustments_along_normal(image_x, image_diff):
     # image_diff[0] = x
     # image_diff = y
-    diff_image_x = np.array((0))
+    diff_image_x = np.array((0.0))
     diff_image_x = np.tile(diff_image_x, len(image_x))
 
     xes = image_x[::2]
@@ -173,6 +221,7 @@ def adjustments_along_normal(image_x, image_diff):
         # if something is weird - LOOK HERE!
         if x-x_left == 0 and y-y_left == 0:
             print('line left is zero. x: ', x, ' y: ', y)
+            print(image_x)
 
         if x_right-x == 0 and y_right-y == 0:
             print('line right is zero. x: ', x, ' y: ', y)
@@ -188,20 +237,22 @@ def adjustments_along_normal(image_x, image_diff):
 
         norm_list = []
         print('index: x= ', x, ' y= ', y)
-        for i in range(-200, 200):
+        for j in range(-10, 11):
             # round to nearest pixel coordinates
-            diff_x = int(round(x + i*norm[0]))
-            diff_y = int(round(y + i*norm[1]))
+            diff_x = x + j*norm[0]
+            diff_y = y + j*norm[1]
 
             # 0 indx? 
             # image_diff[0] = x
             # image_diff = y
-            if diff_x < len(image_diff[0]) and diff_y < len(image_diff) and diff_x >= 0 and diff_y >= 0:
-                # x, y or y,x ?
-                norm_list.append((diff_x, diff_y, image_diff[diff_y][diff_x]))
-            #else: 
-            #    print('index: diff_x= ', diff_x, 'diff_y= ', diff_y)
-        
+            if diff_x > len(image_diff[0])-1 or diff_x < 0 or \
+               diff_y > len(image_diff)-1    or diff_y < 0:
+                diff_value = -1
+            else:
+                diff_value = image_diff[int(round(diff_y))][int(round(diff_x))]
+
+            norm_list.append((diff_x, diff_y, diff_value))
+      
         #print('norm_list:', norm_list)
         #print(image_diff)
         #for i in range(len(image_diff)):
@@ -211,13 +262,13 @@ def adjustments_along_normal(image_x, image_diff):
         # choose the point with the highest value.
         #(diff_x, diff_y, pix_value) = max(norm_list,key=lambda item:item[2])
         sorted_norms = sorted(norm_list,key=lambda item:item[2], reverse=True)
-        if not sorted_norms:
-            print('no sorted norms')
-            print('index: x= ', x, ' y= ', y)
-            print('index: diff_x= ', diff_x, ' diff_y= ', diff_y)
-            print('dimensions of image:', len(image_diff), ', ', len(image_diff[0]))
 
+#        if x > len(image_diff[0])-1 or x < 0 or\
+#           y > len(image_diff)-1    or y < 0:
+#            print('sorted norms:' , sorted_norms)
         best_guess = sorted_norms[0]
+        #sorted_norms[1] = (127, 33, 58888.0)
+        #sorted_norms[2] = (128, 30, 58888.0)
         #print(best_guess) 
         j = 1
         while  j < len(sorted_norms) and best_guess[2] == sorted_norms[j][2]:
@@ -226,12 +277,17 @@ def adjustments_along_normal(image_x, image_diff):
             if new_diff < best_diff:
                 best_guess = sorted_norms[j]
             j += 1
+        print('best guess: ',best_guess)
 
-        diff_x, diff_y, pix_value = best_guess
-        print('chosen: diff_x= ', diff_x, ' diff_y= ', diff_y)
-        diff_image_x[i*2]   = (x-diff_x)/2
-        diff_image_x[i*2+1] = (y-diff_y)/2
-
+        diff_x_best, diff_y_best, pix_value_best = best_guess
+        #print('chosen: diff_x= ', diff_x, ' diff_y= ', diff_y)
+        #print('simple math:', 128.045957-128)
+        diff_image_x[i*2]   = (x-diff_x_best)
+        diff_image_x[i*2+1] = (y-diff_y_best)
+        #print('j:', j)
+        #print('dX x: ', diff_image_x[i*2])
+        #print('dX x: ', diff_image_x[i*2+1])
+        #sys.exit()
     return diff_image_x
 
 def get_norm(coordinats):
@@ -266,17 +322,17 @@ def get_translation(t_x, t_y, length):
     return t
 
 def update_parameters(alignment_parameters, diff_s, diff_theta, diff_t_x, diff_t_y):
-	s     = alignment_parameters[0]
-	theta = alignment_parameters[1]
-	t_x   = alignment_parameters[2]
-	t_y   = alignment_parameters[3]
+    s     = alignment_parameters[0]
+    theta = alignment_parameters[1]
+    t_x   = alignment_parameters[2]
+    t_y   = alignment_parameters[3]
 
-	alignment_parameters[0] = s * (1 + diff_s)
-	alignment_parameters[1] = theta + diff_theta
-	alignment_parameters[2] = t_x + diff_t_x
-	alignment_parameters[3] = t_y + diff_t_y
+    alignment_parameters[0] =  float(s * diff_s) #s * (1 + diff_s)
+    alignment_parameters[1] = theta + diff_theta
+    alignment_parameters[2] = t_x + diff_t_x
+    alignment_parameters[3] = t_y + diff_t_y
 
-	return alignment_parameters
+    return alignment_parameters
 
 def skale_and_rotate(shape, s, theta):
 	a_x = s * math.cos(theta)
@@ -284,33 +340,12 @@ def skale_and_rotate(shape, s, theta):
 
 	M = np.copy(shape)
     #print(M)
-    # rotate and scale shape2 (now know as M)
+    # rotate and scale shape (now know as M)
 	for k in range(0,int(len(shape)/2)):
 		M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
 		M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
 
 	return M
-
-# move points that are moving out of the image frame onto the image again
-# the point is naively projected 4 pixel into the image,
-# one should probably move the point along the rigthfull normal instead of projecting it 
-def align_to_image_frame(image_x, x_len, y_len):
-    xes = image_x[::2]
-    yes = image_x[1::2]
-    for i in range(len(xes)):
-        x = xes[i]
-        y = yes[i]
-        
-        if not xes[i] < x_len:
-            image_x[i*2] = float(x_len - 4)
-        if xes[i] < 0:
-            image_x[i*2] = 0.0
-
-        if not yes[i] < y_len:
-            image_x[i*2+1] = float(y_len - 4)
-        if yes[i] < 0:
-            image_x[i*2+1] = 0.0
-    return image_x
 
 
 with open('test_image_search_image.p', 'rb') as f:

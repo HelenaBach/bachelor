@@ -56,9 +56,6 @@ for test_image in test_images:
 		print(str(i) + ' of ' + str(max_count))
 		# remove the ending of the image
 		test_image = test_image[:-4]
-		print('tester image: ', test_image)
-		image_print = cv2.imread('../data/test/' + test_image + '.jpg', 0)
-		plt.imshow(image_print,cmap = 'gray')
 
 		gray_image = parser.get_grayscale(path_test, test_image)
         # get image features
@@ -72,11 +69,6 @@ for test_image in test_images:
         #aligned_landmarks = aligner.align_pair(landmarks_temp, x)
         #image_features = np.dot(principal_axis, aligned_landmarks-mean)
         # NU TESTER VI IKKE MERE
-		with open('test_image_search_image.p', 'wb') as f:
-			pickle.dump(gray_image, f)
-		with open('test_image_search_model.p', 'wb') as f:
-			pickle.dump(asm_model, f)
-		sys.exit(2)
 
         # return a feature vector + landmarks XXXXXXXXX MÅSKE??? XXXXXX
 		image_features, landmarks = asm.image_search(asm_model, gray_image)
