@@ -60,21 +60,73 @@ def image_search(asm_model, image):
     #image = cv2.imread('../data/leafscan/27.jpg', 0)
 
     image_diff = gaussian_gradient_magnitude(image, sigma=1)
+    plt.imshow(image_print,cmap = 'gray')
+    for i in range(len(image_diff)):
+        for j in range(len(image_diff[0])):
+            if image_diff[i][j] > 14:
+                plt.scatter([i, j], color='red')
+    plt.show()
+    sys.exit(2)
+#    image_flat = image_diff.flatten()
+#    for i in image_diff:
+#        if i > 14:
+#            print(i)
+#    diff_set = set(image_flat)
+#    hist, bin_edges = np.histogram(image_diff, bins = range(len(diff_set)+1))
+#    plt.bar(bin_edges[:-1], hist, width = 1)
+#    plt.xlim(min(bin_edges), max(bin_edges))
+#    print(bin_edges)
+#    print(hist)
+#    plt.show()
+#
+#    sys.exit(2)
 
-    #image_diff = np.copy(image)
+
     # mild smoothing of the image to reduce noise
-    #gaussian(image, sigma=0.4)
-    #sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
-    #sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
-    ## diff the image
-    #image_diff = np.round(sobelx**2 + sobely**2)
+    gaussian(image, sigma=0.4)
+    sobelx = cv2.Sobel(image,cv2.CV_64F,1,0,ksize=5)
+    sobely = cv2.Sobel(image,cv2.CV_64F,0,1,ksize=5)
+    image_diff = np.copy(image)
+    # diff the image
+    image_diff = np.round(sobelx**2 + sobely**2)
 
-    plt.imshow(image_diff,cmap = 'gray')
+    image_diff = image_diff.flatten()
+    print(max(image_diff))
+    diff_set = set(image_diff)
+    print(max(diff_set))
+    print(len(diff_set)+1)
+    hist, bin_edges = np.histogram(image_diff, bins = range(35534152+1))
+    plt.bar(bin_edges[:-1], hist, width = 1)
+    plt.xlim(min(bin_edges), max(bin_edges))
+    print(bin_edges)
+    print(hist)
     plt.show()
 
+    sys.exit(2)
 
+
+
+    plt.show()
+
+    #place the mean shape as the initial guess:
+#	mean_xes = mean[::2]
+#	mean_yes = mean[1::2]
+#    max_width = (max(mean_xes)-min(mean_xes))
+#    max_hight = (max(mean_yes)-min(mean_yes))
+#
+#    if max_width > image[0] or max(mean_xes) > 
     # The landmarks within the model
     model_x = np.copy(mean ) # med noget init placering
+    # the landmarks within the image
+    image_x = np.copy(mean )
+    # initialise the dX array
+    
+    #with open('15252_landmarks.p', 'rb') as f:
+    #    landmarks_15252 = pickle.load(f)
+    #model_x = np.copy(landmarks_15252)
+    #image_x = np.copy(landmarks_15252)
+
+
 
     diff_image_x = np.array((0.0))
     diff_image_x = np.tile(diff_image_x, len(image_x))
@@ -82,33 +134,36 @@ def image_search(asm_model, image):
     # initial parameters. s, theta, t_x, t_y
     len_y = np.size(diff_image_x)/2
     len_x = np.size(diff_image_x[0])/2
-    alignment_parameters = np.array((1.0, 0.0, float(len_x), float(len_y) ))
+    alignment_parameters = np.array((0.5, 0.0, 0.0, 0.0)) #, float(len_x), float(len_y) ))
     # initial b vector
     b = np.array((0.0))
     b = np.tile(b, len(principal_axis))
 
-    # initial transformation of landmark into the image frame
-    translation = get_translation(alignment_parameters[2], alignment_parameters[3], len(image_x)/2)
-    image_x = scale_and_rotate(model_x, alignment_parameters[0], alignment_parameters[1]) + translation 
-    
-    # plot the image
+    img_xes = image_x[::2]
+    img_yes = image_x[1::2]
+    mean_xes = np.mean(img_xes)
+    mean_yes = np.mean(img_yes)
+    mean_vector = get_translation(mean_xes, mean_yes, len(image_x)/2)
+
+    image_x = (image_x - mean_vector) * 0.5 + mean_vector
     img_xes = image_x[::2]
     img_yes = image_x[1::2]
     plt.imshow(image_print,cmap = 'gray')
     plt.plot(img_xes, img_yes, marker='.')
     plt.suptitle('Image x ', fontsize = 14)
     plt.show()
-
     # used to check for significant changes in the suggested movement
     # in image space
     old_suggested_image = image_x
 
     # converges loop
-    for i in range(4): # while True
-
-        # find dX 
-        diff_image_x = adjustments_along_normal(image_x, image_diff)
+    for i in range(30): # while True
         
+        # place all point in the image                  x                 y
+        #image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
+
+        # HUSK AT SIKRER AT ALTING BLIVER GEMT HELE TIDEN - ALLZ THE TIME - WHATEVER U DO!
+        diff_image_x = adjustments_along_normal(image_x, image_diff)
         # Test if we are trying to move to the same place as last time
         suggested_image = image_x + diff_image_x
         sug_xes = suggested_image[::2] 
@@ -121,7 +176,6 @@ def image_search(asm_model, image):
         if (suggested_image is old_suggested_image) or i == 99:
             print('image_search iteration: ' + str(i))
             break
-        
         # BRUG DET DER EFTER DEN ER I ALLOWABLE SPACE!!
         old_suggested_image = suggested_image
 
@@ -261,7 +315,7 @@ def adjustments_along_normal(image_x, image_diff):
         diff_y_best = 0
 
         diff_x_best, diff_y_best =  x, y
-        for j in range(1, 100):
+        for j in range(1, 10):
 
          # round to nearest pixel coordinates
             diff_x = x + j*norm[0]
@@ -288,7 +342,7 @@ def adjustments_along_normal(image_x, image_diff):
                     diff_x_best, diff_y_best, pix_value_best = diff_x, diff_y, diff_value
                     break                                
 
-        for j in range(100):
+        for j in range(1, 10):
 
          # round to nearest pixel coordinates
             diff_x = x - j*norm[0]
@@ -395,17 +449,25 @@ def update_parameters(alignment_parameters, diff_s, diff_theta, diff_t_x, diff_t
     return alignment_parameters
 
 def skale_and_rotate(shape, s, theta):
-	a_x = s * math.cos(theta)
-	a_y = s * math.sin(theta)
+    a_x = s * math.cos(theta)
+    a_y = s * math.sin(theta)
 
-	M = np.copy(shape)
+    xes = shape[::2]
+    yes = shape[1::2]
+    mean_xes = np.mean(xes)
+    mean_yes = np.mean(yes)
+    mean_vector = get_translation(mean_xes, mean_yes, len(shape)/2)
+
+    M = (shape - mean_vector)
+
+    # M = np.copy(shape)
     #print(M)
     # rotate and scale shape (now know as M)
-	for k in range(0,int(len(shape)/2)):
-		M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
-		M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
-
-	return M
+    for k in range(0,int(len(shape)/2)):
+        M[k*2]   = (a_x * M[k*2]) - (a_y * M[k*2+1])
+        M[k*2+1] = (a_y * M[k*2]) + (a_x * M[k*2+1])
+    M =  M  + mean_vector
+    return M
 
 
 with open('test_image_search_image.p', 'rb') as f:
