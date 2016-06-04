@@ -74,13 +74,13 @@ def image_search(asm_model, image):
 #    max_width = (max(mean_xes)-min(mean_xes))
 #    max_hight = (max(mean_yes)-min(mean_yes))
 #
-#    if max_width > image[0] or max(mean_xes) > 
+#    if max_width > image[0] or max(mean_xes) >
     # The landmarks within the model
     model_x = np.copy(mean ) # med noget init placering
     # the landmarks within the image
     image_x = np.copy(mean )
     # initialise the dX array
-    
+
     #with open('15252_landmarks.p', 'rb') as f:
     #    landmarks_15252 = pickle.load(f)
     #model_x = np.copy(landmarks_15252)
@@ -97,7 +97,7 @@ def image_search(asm_model, image):
     # initial parameters. s, theta, t_x, t_y
     len_y = np.size(diff_image_x)/2
     len_x = np.size(diff_image_x[0])/2
-    alignment_parameters = np.array((0.4, 0.0, float(len_x), float(len_y) ))
+    alignment_parameters = np.array((0.0, 0.0, 0.0, 0.0)) #float(len_x), float(len_y) ))
     # initial b vector
     b = np.array((0.0))
     b = np.tile(b, len(principal_axis))
@@ -108,7 +108,7 @@ def image_search(asm_model, image):
 
     # converges loop
     for i in range(20): # while True
-        
+
         # place all point in the image                  x                 y
         #image_x = align_to_image_frame(image_x, len(image_diff[0]), len(image_diff))
 
@@ -116,6 +116,10 @@ def image_search(asm_model, image):
         diff_image_x = adjustments_along_normal(image_x, image_diff)
         # Test if we are trying to move to the same place as last time
         suggested_image = image_x + diff_image_x
+		suc_xes = suggested_image[::2]
+		suc_yes = suggested_image[1::2]
+		plt.plot(suc_xes, suc_yes)
+		plt.show()
         #print(suggested_image)
         if (suggested_image is old_suggested_image) or i == 99:
             print('image_search iteration: ' + str(i))
@@ -142,6 +146,7 @@ def image_search(asm_model, image):
         # dx = M((s(1+ds))^-1, -(theta + dtheta)) [y] - x
         inverted_theta = alignment_parameters[1] * -1
         inverted_s = math.pow(alignment_parameters[0], -1)
+
         diff_model_x = skale_and_rotate(y, inverted_s, inverted_theta) - model_x
 
         #apply the shape contraints and approximate new model parameter x + dx
@@ -154,7 +159,7 @@ def image_search(asm_model, image):
 
         # update b (3)
         b = b + np.dot(principal_axis, diff_model_x)
-        
+
         # limit b to be 3 standard deviations from the mean (eq 15)
         for k in range(len(b)):
             if b[k] > 3 * math.sqrt(comp_variance[k][0]):
@@ -168,7 +173,7 @@ def image_search(asm_model, image):
         # b coordinats in the model space
         pca_x = np.dot(np.array(principal_axis).transpose(), b)
 #        pca_x = np.dot(b, principal_axis)
-        # approximate x (0) 
+        # approximate x (0)
         model_x = mean + pca_x
 
 
@@ -237,12 +242,12 @@ def adjustments_along_normal(image_x, image_diff):
 
         norm_list = []
         print('index: x= ', x, ' y= ', y)
-        for j in range(-10, 11):
+        for j in range(-50, 51):
             # round to nearest pixel coordinates
             diff_x = x + j*norm[0]
             diff_y = y + j*norm[1]
 
-            # 0 indx? 
+            # 0 indx?
             # image_diff[0] = x
             # image_diff = y
             if diff_x > len(image_diff[0])-1 or diff_x < 0 or \
@@ -252,7 +257,7 @@ def adjustments_along_normal(image_x, image_diff):
                 diff_value = image_diff[int(round(diff_y))][int(round(diff_x))]
 
             norm_list.append((diff_x, diff_y, diff_value))
-      
+
         #print('norm_list:', norm_list)
         #print(image_diff)
         #for i in range(len(image_diff)):
@@ -269,7 +274,7 @@ def adjustments_along_normal(image_x, image_diff):
         best_guess = sorted_norms[0]
         #sorted_norms[1] = (127, 33, 58888.0)
         #sorted_norms[2] = (128, 30, 58888.0)
-        #print(best_guess) 
+        #print(best_guess)
         j = 1
         while  j < len(sorted_norms) and best_guess[2] == sorted_norms[j][2]:
             best_diff = (x-best_guess[0])**2 + (y-best_guess[1])**2
