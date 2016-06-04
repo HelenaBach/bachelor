@@ -236,6 +236,7 @@ def normalize_mean(mean_shape):
     # - we know the the first y-coordinate is always negative, as it is the top
     a_x = abs(mean_shape[1])/math.sqrt(mean_shape[0]**2 + mean_shape[1]**2)
     a_y = math.sin(math.acos(a_x))
+
     # hvis mean_shape[0]- x - er positiv, vil vi rykke negativt og omvendt.
     # If the x-coordinate is positive, we need to rotate 'backwards'
     if mean_shape[0] > 0:
