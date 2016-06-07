@@ -3,11 +3,11 @@ import xml.etree.ElementTree as etree
 import os
 from shutil import copy
 import json
+import pickle 
+relative_path = '../data/train/'
 
-relative_path = '../data/leafscan_train/'
 
-
-def create_and_store_json_dicts():
+def create_and_store_pickle_dicts():
 	families = {}
 	genus = {}
 	species = {}
@@ -20,8 +20,8 @@ def create_and_store_json_dicts():
 			tree = etree.parse(relative_path + file)
 			# 
 			root = tree.getroot()
-			id = file[:-4]
-#			id = root.find('MediaId').text
+#			id = file[:-4]
+			id = root.find('MediaId').text
 #			if not id is file[:4]:
 #				print(id)
 #				print(file[:4])
@@ -51,8 +51,10 @@ def create_and_store_json_dicts():
 	for name in stat_list:
 
 		# save to file:
-		with open('../data/' + name + '.json', 'w') as f:
-		    json.dump(stat_list[name], f)
+#		with open('../data/' + name + '.json', 'w') as f:
+#		    json.dump(stat_list[name], f)
+		with open( name + '.p', 'wb') as f:
+			pickle.dump(stat_list[name], f)
 	
 		list_3  = {}
 		list_5  = {}
@@ -70,19 +72,19 @@ def create_and_store_json_dicts():
 				list_10[key] = stat_list[name][key]
 	
 		# save to file:
-		with open('../data/' + name + '_>2.json', 'w') as f:
-		    json.dump(list_3, f)
+		with open( name + '_>2.p', 'wb') as f:
+		    pickle.dump(list_3, f)
 	
-		with open('../data/' + name + '_>4.json', 'w') as f:
-		    json.dump(list_5, f)
+		with open(name + '_>4.p', 'wb') as f:
+		    pickle.dump(list_5, f)
 		
 		# save to file:
-		with open('../data/' + name + '_>6.json', 'w') as f:
-		    json.dump(list_7, f)
+		with open( name + '_>6.p', 'wb') as f:
+		    pickle.dump(list_7, f)
 	
 		# save to file:
-		with open('../data/' + name + '_>9.json', 'w') as f:
-		    json.dump(list_10, f)
+		with open(name + '_>9.p', 'wb') as f:
+		    pickle.dump(list_10, f)
 	
 
 	#load from file:
@@ -104,8 +106,8 @@ def save_number_of_occences(name, list):
 		stats[key] = number_of_occences
 
 	# save to file:
-	with open('../data/' + name + '_stats.json', 'w') as f:
-	    json.dump(stats, f)
+	with open(name + '_stats.p', 'wb') as f:
+	    pickle.dump(stats, f)
 
 
 def print_the_list(name, list):
@@ -166,25 +168,25 @@ def print_and_save_families_and_species(number):
 
 
 
-create_and_store_json_dicts()
+create_and_store_pickle_dicts()
 
-with open('../data/families.json', 'r') as f:
+with open('families.p', 'rb') as f:
     try:
-        families = json.load(f)
+        families = pickle.load(f)
     # if the file is empty the ValueError will be thrown
     except ValueError:
     	families = {}
 
-with open('../data/species.json', 'r') as f:
+with open('species.p', 'rb') as f:
     try:
-        species = json.load(f)
+        species = pickle.load(f)
     # if the file is empty the ValueError will be thrown
     except ValueError:
     	species = {}
 
-with open('../data/genus.json', 'r') as f:
+with open('genus.p', 'rb') as f:
     try:
-        genus = json.load(f)
+        genus = pickle.load(f)
     # if the file is empty the ValueError will be thrown
     except ValueError:
     	genus = {}
