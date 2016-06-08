@@ -5,6 +5,7 @@ from table import image_table
 import sys # debugging
 from functools import partial
 from multiprocessing import Pool
+import matplotlib.pyplot as plt
 
 # Compute the V_R_kl of all distances
 # argument: image_table of all img_structs
@@ -219,9 +220,31 @@ def mean_shape():
 #  - this is the 'easy' solution. One could some other normalizing default
 # arguments: the first shape in the set, the current meanshape, and the V_R_kl matrix
 # returns: the normalized meanshape.
-def normalize_mean(shape1, mean_shape, var_matrix):
-    x = solve_x(shape1, mean_shape, var_matrix)
+def normalize_mean(mean_shape):
+    # find the mean value for the x-coor and y-coor
+    xes = mean_shape[::2]
+    yes = mean_shape[1::2]
+    mean_x = np.mean(xes)
+    mean_y = np.mean(yes)
+
+    mean_vector = np.tile(np.array((mean_x,mean_y)), len(xes))
+    # Mean center the mean shape
+    mean_shape = mean_shape - mean_vector
+
+    # Find the rotation, to align the first coordinate with the y-axis.
+    # - we use a scaling of 1.
+    # - we know the the first y-coordinate is always negative, as it is the top
+    a_x = abs(mean_shape[1])/math.sqrt(mean_shape[0]**2 + mean_shape[1]**2)
+    a_y = math.sin(math.acos(a_x))
+
+    # hvis mean_shape[0]- x - er positiv, vil vi rykke negativt og omvendt.
+    # If the x-coordinate is positive, we need to rotate 'backwards'
+    if mean_shape[0] > 0:
+        a_y = a_y * (-1)
+
+    x = np.array((a_x, a_y, 0.0, 0.0))
     norm_mean = align_pair(mean_shape, x)
+
     return norm_mean
 
 # The align algorithm of Cootes
@@ -242,6 +265,6 @@ def the_real_aligner():
         if diff < 100 or i == 99:
             print('sum of diff: ' + str(diff))
             return mean, var_matrix
-        new_mean = normalize_mean(shape1, mean, var_matrix)
+        new_mean = normalize_mean(mean)
         align_all_shapes(new_mean)
         prev_mean = mean
