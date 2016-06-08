@@ -21,7 +21,7 @@ except:
 	sys.exit(2)
 
 # ROC have fields True Positive (tp), False Positive (fp), number of species (number/p)
-# From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images 
+# From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images
 def update_ROC(class_id, tp=False, fp=False, number=False):
     if class_id in ROC:
         if tp:
@@ -71,7 +71,7 @@ test_images = test_list
 # list of all test images and their predictions.
 ROC = {}
 
-k = 5
+k = 9
 correct = 0
 
 for test_image in test_images:
@@ -92,15 +92,15 @@ for test_image in test_images:
 
         # TESTER DET ER DUMT
         # gør Otsu agtige ting
-        #binary = segmentation.otsu(gray_image)
+        binary = segmentation.otsu(gray_image)
         ## set landmarks
-        #landmarks = segmentation.landmark_setter(binary, gray_image)
-        #x = aligner.solve_x(mean, landmarks, var_matrix)
-        #aligned_landmarks = aligner.align_pair(landmarks, x)
-        #image_features = np.dot(principal_axis, aligned_landmarks-mean)
+        landmarks = segmentation.landmark_setter(binary, gray_image)
+        x = aligner.solve_x(mean, landmarks, var_matrix)
+        aligned_landmarks = aligner.align_pair(landmarks, x)
+        image_features = np.dot(principal_axis, aligned_landmarks-mean)
         # NU TESTER VI IKKE MERE
         # return a feature vector + landmarks XXXXXXXXX MÅSKE??? XXXXXX
-        image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
+        #image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
 
 
         # classify new image from training data
@@ -131,7 +131,7 @@ print('accuracy: ', correct/ max_count)
 print('correct: ', correct)
 #with open('image_dict_labels_with_seg.p', 'wb') as f:
 #	pickle.dump(image_results, f)
-with open('test_table_image_search_hack.p', 'wb') as f:
+with open('test_table_k_weight_not_image_search_k7.p', 'wb') as f:
     pickle.dump(test_table, f)
-with open('ROC_table_image_search_hack.p', 'wb') as f:
+with open('ROC_table_k_weight_not_image_search_k7.p', 'wb') as f:
     pickle.dump(ROC, f)
