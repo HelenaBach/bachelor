@@ -94,7 +94,7 @@ def image_search(asm_model, image, threshold=70):
 
     # initial landmarks within the image
     image_x = model_x_rotated + t_vector
-    print('t_values:', t_x, t_y)
+    print('initial t_values:', t_x, t_y)
 
 
     #principal_axis = principal_axis[:20]
@@ -104,12 +104,12 @@ def image_search(asm_model, image, threshold=70):
     b = np.tile(b, len(principal_axis))
 
 #    # plot of the initial placement of the landmark within the image frame
-    img_xes = image_x[::2]
-    img_yes = image_x[1::2]
-    plt.imshow(image,cmap = 'gray')
-    plt.plot(img_xes, img_yes, marker='.')
-    plt.suptitle('Initial placement of image x ', fontsize = 14)
-    plt.show()
+#    img_xes = image_x[::2]
+#    img_yes = image_x[1::2]
+#    plt.imshow(image,cmap = 'gray')
+#    plt.plot(img_xes, img_yes, marker='.')
+#    plt.suptitle('Initial placement of image x ', fontsize = 14)
+#    plt.show()
 
     # instantiate the approximation of dx 
     approx_dx = np.array((0))
@@ -121,16 +121,16 @@ def image_search(asm_model, image, threshold=70):
         # find dX -> the suggested changes in the image frame
         diff_image_x = adjustments_along_normal(image_x, image_diff, threshold)
 
-        img_xes = image_x[::2]
-        img_yes = image_x[1::2]
-        plt.plot(img_xes, img_yes, marker='.')
-
-        diff_image_xes = (diff_image_x + image_x)[::2]
-        diff_image_yes = (diff_image_x + image_x)[1::2]
-        plt.imshow(image_diff, cmap='gray')
-        plt.plot(diff_image_xes, diff_image_yes, marker='.')
-        plt.suptitle('suggested adjustments')
-        plt.show()
+#        img_xes = image_x[::2]
+#        img_yes = image_x[1::2]
+#        plt.plot(img_xes, img_yes, marker='.')
+#
+#        diff_image_xes = (diff_image_x + image_x)[::2]
+#        diff_image_yes = (diff_image_x + image_x)[1::2]
+#        plt.imshow(image_diff, cmap='gray')
+#        plt.plot(diff_image_xes, diff_image_yes, marker='.')
+#        plt.suptitle('suggested adjustments')
+#        plt.show()
         
         # align X o be as close to the new points as possible
         # alignment_parameters = a_x, a_y, t_x, t_y
@@ -139,9 +139,10 @@ def image_search(asm_model, image, threshold=70):
         #print(diff_alignment_parameters)
         
         diff_matrix = build_matrix(diff_alignment_parameters[0], diff_alignment_parameters[1])
-        length = int(len(image_x)/2)
+        length = len(image_x)/2
         #diff_vector = get_translation(diff_alignment_parameters[3], diff_alignment_parameters[2], length)
         diff_vector = get_translation(diff_alignment_parameters[2], diff_alignment_parameters[3], length)
+        #print('diff t vector: ', diff_vector[0], diff_vector[1])
     
         # y from eq. 19
         #y = image_x + diff_image_x - image_x_c
@@ -159,11 +160,11 @@ def image_search(asm_model, image, threshold=70):
         # dx = M((s(1+ds))^-1, -(theta + dtheta)) [y] - x
         diff_model_x = scale_and_rotate(y, np.linalg.inv(rotation_matrix)) - model_x 
 
-        # plot the x + dx 
- #       diff_model_xes = (model_x + diff_model_x)[::2]
- #       diff_model_yes = (model_x + diff_model_x)[1::2]
- #       plt.plot(diff_model_xes, diff_model_yes, color='purple')
- #       plt.show()
+#        # plot the x + dx 
+#        diff_model_xes = (model_x + diff_model_x)[::2]
+#        diff_model_yes = (model_x + diff_model_x)[1::2]
+#        plt.plot(diff_model_xes, diff_model_yes, color='purple')
+#        plt.show()
         
         #apply the shape contraints and approximate new model parameter x + dx
         # 0: x + dx ~ x + P*(b+db) <- allowable shape
@@ -194,7 +195,7 @@ def image_search(asm_model, image, threshold=70):
         # b coordinats in the model space
         approx_dx = np.dot(np.array(principal_axis).transpose(), db)
 
-        # plot the model
+#        # plot the model
 #        mod_xes = (model_x+approx_dx)[::2]
 #        mod_yes = (model_x+approx_dx)[1::2]
 #        plt.plot(mod_xes, mod_yes, marker='.')
@@ -205,25 +206,37 @@ def image_search(asm_model, image, threshold=70):
     
         # store the old suggestion of landmark to test if any change has happend
         image_x_old = image_x
-        #image_x_old = scale_and_rotate(model_x+approx_dx, rotation_matrix)
-        # plot the landmarks within the image frame
-        plt.imshow(image_diff,cmap = 'gray')
-        img_xes = image_x_old[::2]
-        img_yes = image_x_old[1::2]
-        plt.plot(img_xes, img_yes, marker='o')
+ #       #image_x_old = scale_and_rotate(model_x+approx_dx, rotation_matrix)
+ #       # plot the landmarks within the image frame
+ #       plt.imshow(image_diff,cmap = 'gray')
+ #       img_xes = image_x_old[::2]
+ #       img_yes = image_x_old[1::2]
+ #       plt.plot(img_xes, img_yes, marker='o')
 
         image_x = scale_and_rotate(model_x+approx_dx, rotation_matrix) + t_vector
+
+         #find initial translation of model_x
+#        if i == 0:
+#            print('lower x og y  : ', lower_x, lower_y)
+#            print('image x og y  : ', image_x[0], image_x[1])
+#            print('t vector value: ', t_vector[0], t_vector[1])
+        t_x_hack = lower_x - image_x[0]
+        t_y_hack = lower_y - image_x[1]
+        print('hack vector t : ', t_x_hack, t_y_hack)
+        length = len(image_x)/2
+        t_vector_hack = get_translation(t_x_hack, t_y_hack, length)
+        image_x = image_x + t_vector_hack
         #print('diff in image frame: ', sum(abs(image_x-image_x_old)))
 
         # further plot of the landmarks within the image frame.
-        img_xes = image_x[::2]
-        img_yes = image_x[1::2]
-        plt.plot(img_xes, img_yes, marker='.')
-        #axes = plt.gca()
-        #axes.set_xlim([xmin,xmax])
-        #axes.set_ylim([ymin,ymax]
-        plt.suptitle('image shape before and after pca', fontsize = 14)
-        plt.show()
+#        img_xes = image_x[::2]
+#        img_yes = image_x[1::2]
+#        plt.plot(img_xes, img_yes, marker='.')
+#        #axes = plt.gca()
+#        #axes.set_xlim([xmin,xmax])
+#        #axes.set_ylim([ymin,ymax]
+#        plt.suptitle('image shape before and after pca', fontsize = 14)
+#        plt.show()
         if sum(abs(image_x-image_x_old)) < 100:
             break        
     return b, (model_x + approx_dx)
@@ -269,7 +282,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 # if all points have the same coordinates
                 if k == len(xes):
                     print('all points have same coordinates')
-                    sys.exit(2)
+                    #sys.exit(2)
 
         # if the two points are placed at the same coordinat
         if x_right-x == 0 and y_right-y == 0:
@@ -282,7 +295,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 # we don't look at the points that x_left has already looked at
                 if l == len(xes)-k:
                     print('all points have same coordinates')
-                    sys.exit(2)
+                    #sys.exit(2)
 
 
         line_left  = np.array((x-x_left, y-y_left))
@@ -306,6 +319,10 @@ def adjustments_along_normal(image_x, image_diff, threshold):
 
         # initialize the best choise as the original point
         diff_x_best, diff_y_best =  x, y
+
+        #if i == 10:
+        #    print('original x and y', x, y)
+        #    print('own diff value: ', own_diff_value)
 
         for j in range(1, 150):
 
@@ -332,10 +349,13 @@ def adjustments_along_normal(image_x, image_diff, threshold):
             else:
                 diff_value_neg = image_diff[int(round(diff_y_neg))][int(round(diff_x_neg))]
 
+         #   print('pos x, y: ', diff_x_pos, diff_y_pos)
+         #   print('value   : ', diff_value_pos)
             diff_value = diff_value_pos
             diff_y, diff_x = diff_y_pos, diff_x_pos
             flag = 1
-
+        #    print('neg x, y: ', diff_x_neg, diff_y_neg)
+        #    print('value   : ', diff_value_neg)
             if diff_value_neg > diff_value_pos:
                 diff_value = diff_value_neg
                 diff_y, diff_x = diff_y_neg, diff_x_neg
@@ -344,8 +364,16 @@ def adjustments_along_normal(image_x, image_diff, threshold):
             if diff_value > threshold and  diff_value > own_diff_value:
                 norm_y = norm[1] * flag
                 norm_x = norm[0] * flag
-                if image_diff[int(round(diff_y + norm_y))][int(round(diff_x+ norm_x))] < diff_value:                  
+                # ensure next value is within the image frame
+                if int(round(diff_x + norm_x)) > len(image_diff[0])-1 or int(round(diff_x + norm_x)) < 0 or \
+                   int(round(diff_y + norm_y)) > len(image_diff)-1    or int(round(diff_y + norm_y)) < 0:
+                    next_diff_value = -1
+                else:
+                    next_diff_value = image_diff[int(round(diff_y + norm_y))][int(round(diff_x + norm_x))]
+
+                if next_diff_value < diff_value:                  
                     diff_x_best, diff_y_best, pix_value_best = diff_x, diff_y, diff_value
+                    #print('I CHOOSE YOOU!')
                     break                                
 
         diff_image_x[i*2]   = (diff_x_best-x)
@@ -463,13 +491,13 @@ def normalize_model(model_x, image, threshold, image_to_show):
     v1 = np.array((upper_x - lower_x, upper_y - lower_y))
     v2 = np.array((mod_upper_x - mod_lower_x, mod_upper_y - mod_lower_y))
     
-    # plotting of the normals
-    plt.imshow(image_to_show,cmap = 'gray')
-    plt.plot([mod_lower_x, mod_upper_x], [mod_lower_y, mod_upper_y], marker='.')
-    plt.plot([lower_x, upper_x], [lower_y, upper_y], marker='.')
-    plt.plot(model_x_xes, model_x_yes)
-    plt.suptitle('Image x ', fontsize = 14)
-    plt.show()
+#   # plotting of the normals
+#    plt.imshow(image_to_show,cmap = 'gray')
+#    plt.plot([mod_lower_x, mod_upper_x], [mod_lower_y, mod_upper_y], marker='.')
+#    plt.plot([lower_x, upper_x], [lower_y, upper_y], marker='.')
+#    plt.plot(model_x_xes, model_x_yes)
+#    plt.suptitle('Image x ', fontsize = 14)
+#    plt.show()
 
     # find the angle between the two lines / the two shapes
     a_x_tmp, a_y_tmp = angle_between(v2, v1)
@@ -519,8 +547,8 @@ def normalize_image(image):
 #with open('test_image_search_image.p', 'rb') as f:
 #   image = pickle.load(f)
 #
-with open('test_image_search_model.p', 'rb') as f:
-   asm_model = pickle.load(f)
+#with open('test_image_search_model.p', 'rb') as f:
+#   asm_model = pickle.load(f)
 
 #print('tests image: ', image)
 #image_print = cv2.imread('../data/train/687.jpg', 0)
@@ -531,31 +559,32 @@ with open('test_image_search_model.p', 'rb') as f:
 
 
 # get all images
-test_list = os.listdir('../data/test/')
-
-max_count = len(test_list)/2
-
-i = 1
-
-test_images = test_list
-
-for test_image in test_images:
-    # make sure we only test each image one time
-    if test_image.endswith('.xml'):
-
-        print(str(i) + ' of ' + str(max_count))
-
-        # remove the ending of the image
-        test_image = test_image[:-4]
-        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
-        :#or test_image == '68284':
-            continue
-
-        print('image: ', test_image)
-        gray_image = parser.get_grayscale('../data/test/', test_image)
-
-        image_features, landmarks = image_search(asm_model, gray_image)
-
+#test_list = os.listdir('../data/test/')
+#
+#max_count = len(test_list)/2
+#
+#i = 1
+#
+#test_images = test_list
+#test_images = ['108138.xml']
+#
+#for test_image in test_images:
+#    # make sure we only test each image one time
+#    if test_image.endswith('.xml'):
+#
+#        print(str(i) + ' of ' + str(max_count))
+#
+#        # remove the ending of the image
+#        test_image = test_image[:-4]
+##        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
+##        :#or test_image == '68284':
+##            continue
+#
+#        print('image: ', test_image)
+#        gray_image = parser.get_grayscale('../data/test/', test_image)
+#
+#        image_features, landmarks = image_search(asm_model, gray_image)
+#
 
 #image_print = parser.get_grayscale('../data/test/', '103527.jpg')
 #

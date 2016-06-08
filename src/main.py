@@ -87,7 +87,7 @@ for test_image in test_images:
 
         print('image: ', test_image)
         gray_image = parser.get_grayscale(path_test, test_image)
-        gray_image = cv2.imread(path_test + test_image + '.jpg', 0)
+        #test_image = cv2.imread(path_test + test_image + '.jpg', 0)
         # get image features
 
         # TESTER DET ER DUMT
@@ -131,7 +131,7 @@ print('accuracy: ', correct/ max_count)
 print('correct: ', correct)
 #with open('image_dict_labels_with_seg.p', 'wb') as f:
 #	pickle.dump(image_results, f)
-with open('test_table_image_search.p', 'wb') as f:
+with open('test_table_image_search_hack.p', 'wb') as f:
     pickle.dump(test_table, f)
-with open('ROC_table_image_search.p', 'wb') as f:
+with open('ROC_table_image_search_hack.p', 'wb') as f:
     pickle.dump(ROC, f)
