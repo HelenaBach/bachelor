@@ -14,19 +14,19 @@ import pca
 #with open(im_table, 'rb') as f:
 #    img_table = pickle.load(f)
 
-with open('mean_more.p', 'rb') as f:
+with open('mean_centered_test.p', 'rb') as f:
     mean = pickle.load(f)
 
-with open('image_table_more.p', 'rb') as f:
+with open('image_table_centered_test.p', 'rb') as f:
     image_table = pickle.load(f)
 
 with open('image_table_unaligned.p', 'rb') as f:
     image_table_unaligned = pickle.load(f)
 
-with open('pca.p', 'rb') as f:
-     pca = pickle.load(f)
+#with open('pca.p', 'rb') as f:
+#     pca = pickle.load(f)
 
-(principal_axis, comp_variance) = pca
+#(principal_axis, comp_variance) = pca
 
 # plot the mean shape
 xes = mean[::2]
@@ -35,9 +35,9 @@ yes = mean[1::2]
 yes = np.append(yes, mean[1])
 plt.plot(xes,yes, marker='.')
 plt.suptitle('Mean Shape', fontsize = 14)
-axes = plt.gca()
-axes.set_xlim([0,675])
-axes.set_ylim([0,900])
+#axes = plt.gca()
+#axes.set_xlim([0,675])
+#axes.set_ylim([0,900])
 plt.show()
 
 # plot 5 unaligned shapes
@@ -49,9 +49,9 @@ for img in image_table_unaligned[:5]:
     un_yes = np.append(un_yes, un_yes[0])
     plt.plot(un_xes, un_yes)
 plt.suptitle('5 Shapes', fontsize = 14)
-axes = plt.gca()
-axes.set_xlim([0,675])
-axes.set_ylim([0,900])
+#axes = plt.gca()
+#axes.set_xlim([0,675])
+#axes.set_ylim([0,900])
 plt.show()
 
 #plot 5 aligned shapes
@@ -62,10 +62,10 @@ for img in image_table[:5]:
     notun_yes = shape[1::2]
     notun_yes = np.append(notun_yes, notun_yes[0])
     plt.plot(notun_xes, notun_yes)
-axes = plt.gca()
+#axes = plt.gca()
 plt.suptitle('5 Aligned Shapes', fontsize = 14)
-axes.set_xlim([0,675])
-axes.set_ylim([0,900])
+#axes.set_xlim([0,675])
+#axes.set_ylim([0,900])
 plt.show()
 
 sys.exit(2)
@@ -94,17 +94,17 @@ ax.grid(zorder=0)
 plt.suptitle('Accumulated Variance in Percentage', fontsize = 14)
 ax.set_xlabel('Principal Components')
 ax.set_ylabel('Percentage of Variance')
-minor_ticks = np.arange(-5, 220, 5)                                               
-#ax.set_xticks(major_ticks)                                                       
+minor_ticks = np.arange(-5, 220, 5)
+#ax.set_xticks(major_ticks)
 ax.set_xticks(minor_ticks, minor=True)
-ax.grid(which='both')                                                            
-# or if you want differnet settings for the grids:                               
-ax.grid(which='minor', alpha=0.2)                                                
-ax.grid(which='major', alpha=0.5)                                          
+ax.grid(which='both')
+# or if you want differnet settings for the grids:
+ax.grid(which='minor', alpha=0.2)
+ax.grid(which='major', alpha=0.5)
 axes.set_xlim([0,220])
 axes.set_ylim([0,1])
-#ax.set_yticks(major_ticks)                                                       
-#ax.set_yticks(minor_ticks, minor=True)   
+#ax.set_yticks(major_ticks)
+#ax.set_yticks(minor_ticks, minor=True)
 plt.show()
 
 

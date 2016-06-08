@@ -20,7 +20,7 @@ except:
         sys.exit(2)
 
 # get all images
-images = os.listdir(path)#[:]
+images = os.listdir(path)[:300]
 
 # initialize the image table
 for image in images:
@@ -47,11 +47,11 @@ for im_struct in image_table:
 # align the dataset
 mean, var_matrix = aligner.the_real_aligner()
 
-with open('image_table_centered.p', 'wb') as f:
+with open('image_table_centered_test.p', 'wb') as f:
         pickle.dump(image_table, f)
-with open('mean_centered.p', 'wb') as f:
+with open('mean_centered_test.p', 'wb') as f:
         pickle.dump(mean, f)
-with open('var_matrix_centered.p', 'wb') as f:
+with open('var_matrix_centered_test.p', 'wb') as f:
         pickle.dump(var_matrix, f)
 
 print("--- %s seconds ---" % (time.time() - start_time))
