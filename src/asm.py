@@ -33,7 +33,7 @@ def construct():
 		landmarks = im_struct['landmarks']
 		data.append(landmarks)
 
-	principal_axis, comp_variance = pca.fit(data, mean, 0.95)
+	principal_axis, comp_variance = pca.fit(data, mean, 80)
 
 	#print('95')
         #	#print(len(principal_axis))

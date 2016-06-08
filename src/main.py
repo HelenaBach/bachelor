@@ -131,7 +131,7 @@ print('accuracy: ', correct/ max_count)
 print('correct: ', correct)
 #with open('image_dict_labels_with_seg.p', 'wb') as f:
 #	pickle.dump(image_results, f)
-with open('test_table_image_search_hack.p', 'wb') as f:
+with open('test_table_80pc.p', 'wb') as f:
     pickle.dump(test_table, f)
-with open('ROC_table_image_search_hack.p', 'wb') as f:
+with open('ROC_table_80pc.p', 'wb') as f:
     pickle.dump(ROC, f)

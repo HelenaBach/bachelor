@@ -216,17 +216,17 @@ def image_search(asm_model, image, threshold=70):
         image_x = scale_and_rotate(model_x+approx_dx, rotation_matrix) + t_vector
 
          #find initial translation of model_x
-#        if i == 0:
+        if i == 0:
 #            print('lower x og y  : ', lower_x, lower_y)
 #            print('image x og y  : ', image_x[0], image_x[1])
 #            print('t vector value: ', t_vector[0], t_vector[1])
-        t_x_hack = lower_x - image_x[0]
-        t_y_hack = lower_y - image_x[1]
-        print('hack vector t : ', t_x_hack, t_y_hack)
-        length = len(image_x)/2
-        t_vector_hack = get_translation(t_x_hack, t_y_hack, length)
-        image_x = image_x + t_vector_hack
-        #print('diff in image frame: ', sum(abs(image_x-image_x_old)))
+            t_x_hack = lower_x - image_x[0]
+            t_y_hack = lower_y - image_x[1]
+#        print('hack vector t : ', t_x_hack, t_y_hack)
+            length = len(image_x)/2
+            t_vector_hack = get_translation(t_x_hack, t_y_hack, length)
+            image_x = image_x + t_vector_hack
+#        #print('diff in image frame: ', sum(abs(image_x-image_x_old)))
 
         # further plot of the landmarks within the image frame.
 #        img_xes = image_x[::2]
