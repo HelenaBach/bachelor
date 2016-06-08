@@ -220,12 +220,15 @@ def mean_shape():
 #  - this is the 'easy' solution. One could some other normalizing default
 # arguments: the first shape in the set, the current meanshape, and the V_R_kl matrix
 # returns: the normalized meanshape.
-def normalize_mean(mean_shape):
+def normalize_mean_init(mean_shape):
     # find the mean value for the x-coor and y-coor
     xes = mean_shape[::2]
     yes = mean_shape[1::2]
     mean_x = np.mean(xes)
     mean_y = np.mean(yes)
+
+    plt.plot(xes,yes)
+    plt.show()
 
     mean_vector = np.tile(np.array((mean_x,mean_y)), len(xes))
     # Mean center the mean shape
@@ -245,7 +248,47 @@ def normalize_mean(mean_shape):
     x = np.array((a_x, a_y, 0.0, 0.0))
     norm_mean = align_pair(mean_shape, x)
 
+    xes = norm_mean[::2]
+    xes = np.append(xes, norm_mean[0])
+    yes = norm_mean[1::2]
+    yes = np.append(yes, norm_mean[1])
+    plt.plot(xes,yes, marker='.')
+    plt.suptitle('Mean Shape init', fontsize = 14)
+    #axes = plt.gca()
+    #axes.set_xlim([0,675])
+    #axes.set_ylim([0,900])
+    plt.show()
+
     return norm_mean
+
+def normalize_mean(mean, default, var_matrix):
+    xes = mean[::2]
+    xes = np.append(xes, mean[0])
+    yes = mean[1::2]
+    yes = np.append(yes, mean[1])
+    plt.plot(xes,yes, marker='.')
+    plt.suptitle('Mean Shape before', fontsize = 14)
+    #axes = plt.gca()
+    #axes.set_xlim([0,675])
+    #axes.set_ylim([0,900])
+    plt.show()
+
+    x = solve_x(default, mean, var_matrix)
+    norm_mean = align_pair(mean, x)
+
+    xes = norm_mean[::2]
+    xes = np.append(xes, norm_mean[0])
+    yes = norm_mean[1::2]
+    yes = np.append(yes, norm_mean[1])
+    plt.plot(xes,yes, marker='.')
+    plt.suptitle('Mean Shape after', fontsize = 14)
+    #axes = plt.gca()
+    #axes.set_xlim([0,675])
+    #axes.set_ylim([0,900])
+    plt.show()
+
+    return norm_mean
+
 
 # The align algorithm of Cootes
 def the_real_aligner():
@@ -256,15 +299,21 @@ def the_real_aligner():
     # initial previous mean_shape - dummy 1x200 vector of zeros
     prev_mean = np.array((0))
     prev_mean = np.tile(prev_mean, 200)
-    for i in range(100):
+    #default = np.array((0))
+    #default = np.tile(default, 200)
+    for i in range(15):
         print('aligner iteration: ' + str(i))
         mean = mean_shape()
         # check if prev_mean and mean is 'equal' - does the process converge
         diff = sum(abs(prev_mean-mean))
         print('sum of diff: ' + str(diff))
-        if diff < 100 or i == 99:
+        if diff < 100 or i == 15:
             print('sum of diff: ' + str(diff))
             return mean, var_matrix
-        new_mean = normalize_mean(mean)
+        #if i == 0:
+         #   default = normalize_mean_init(mean)
+
+        new_mean = normalize_mean(mean, shape1, var_matrix)
         align_all_shapes(new_mean)
         prev_mean = mean
+    #return mean, var_matrix

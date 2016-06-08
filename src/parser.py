@@ -4,6 +4,7 @@ import os
 from shutil import copy
 import numpy as np
 import cv2
+import sys
 
 # instantiate an image object.
 ## arguments: the relative path to file directory, file
