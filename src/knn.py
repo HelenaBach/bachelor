@@ -36,7 +36,7 @@ def getNeighbors(trainingSet, testInstance, k):
     distances.sort(key=lambda item:item[1])
     neighbors = distances[:k]
 
-	return neighbors
+    return neighbors
 
 def getResponse(neighbors):
     classVotes = {}

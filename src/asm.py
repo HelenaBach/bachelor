@@ -37,7 +37,7 @@ def construct():
         landmarks = im_struct['landmarks']
         data.append(landmarks)
 
-    # run pca 
+    # run pca
     principal_axis, comp_variance = pca.fit(data, mean, 200)
 
 
@@ -54,14 +54,14 @@ def construct():
 # find landmarks of the image using image search
 # arguments: the asm model which is used to find the shape within the image
 #          : the image of the shape to be found
-#          : the threshold 
+#          : the threshold
 # returns
 def image_search(asm_model, image, threshold=70):
     # image[0] = x
     # image = y
     mean, var_matrix, principal_axis, comp_variance = asm_model
 
-    # differentiate the image 
+    # differentiate the image
     image_tmp = np.array(image, dtype=np.float)
     sigma = 2
     image_diff = sigma * gaussian_gradient_magnitude(image_tmp, sigma=sigma)
@@ -79,7 +79,7 @@ def image_search(asm_model, image, threshold=70):
     # rotate model_x
     rotation_matrix = build_matrix(a_x, a_y)
     model_x_rotated = scale_and_rotate(model_x, rotation_matrix)
-    
+
     # find initial translation of model_x
     t_x = lower_x - model_x_rotated[0]
     t_y = lower_y - model_x_rotated[1]
@@ -105,11 +105,11 @@ def image_search(asm_model, image, threshold=70):
 #    plt.suptitle('Initial placement of image x ', fontsize = 14)
 #    plt.show()
 
-    # instantiate the approximation of dx 
+    # instantiate the approximation of dx
     approx_dx = np.array((0))
     approx_dx = np.tile(approx_dx, len(model_x))
-    
-    # this loop should ideally run until the landmarks reach a fix point 
+
+    # this loop should ideally run until the landmarks reach a fix point
     for i in range(50): # while True
         print('iteration ', i)
         # find dX -> the suggested changes in the image frame
@@ -125,24 +125,24 @@ def image_search(asm_model, image, threshold=70):
 #        plt.plot(diff_image_xes, diff_image_yes, marker='.')
 #        plt.suptitle('suggested adjustments')
 #        plt.show()
-        
+
         # align X o be as close to the new points as possible
         # alignment_parameters = a_x, a_y, t_x, t_y
 
         diff_alignment_parameters = aligner.solve_x(image_x+diff_image_x, image_x, var_matrix)
         #print(diff_alignment_parameters)
-        
+
         diff_matrix = build_matrix(diff_alignment_parameters[0], diff_alignment_parameters[1])
         length = len(image_x)/2
         #diff_vector = get_translation(diff_alignment_parameters[3], diff_alignment_parameters[2], length)
         diff_vector = get_translation(diff_alignment_parameters[2], diff_alignment_parameters[3], length)
         #print('diff t vector: ', diff_vector[0], diff_vector[1])
-    
+
         # y from eq. 19
         #y = image_x + diff_image_x - image_x_c
         # +
         y = scale_and_rotate(model_x + approx_dx, rotation_matrix) + diff_image_x - diff_vector
-        
+
         # calculate new s, theta, t_x, t_y
         #alignment_parameters = np.dot(alignment_parameters, diff_alignment_parameters)
         rotation_matrix = np.dot(rotation_matrix, diff_matrix)
@@ -152,26 +152,26 @@ def image_search(asm_model, image, threshold=70):
 
         # suggested movements of the points in the model space
         # dx = M((s(1+ds))^-1, -(theta + dtheta)) [y] - x
-        diff_model_x = scale_and_rotate(y, np.linalg.inv(rotation_matrix)) - model_x 
+        diff_model_x = scale_and_rotate(y, np.linalg.inv(rotation_matrix)) - model_x
 
-#        # plot the x + dx 
+#        # plot the x + dx
 #        diff_model_xes = (model_x + diff_model_x)[::2]
 #        diff_model_yes = (model_x + diff_model_x)[1::2]
 #        plt.plot(diff_model_xes, diff_model_yes, color='purple')
 #        plt.show()
-        
+
         #apply the shape contraints and approximate new model parameter x + dx
         # 0: x + dx ~ x + P*(b+db) <- allowable shape
         # 1: db = P^t * dx
         # 2: x + dx ~ x + P*(b+P^t * dx)
         # 3: b = b + db = b + P^t * dx
-        
+
         # obs! PC's is 'transposed' so inverse the transposion
 
         # update b (3)
         db = np.dot(principal_axis, diff_model_x)
 
-        # since b = [0,..,0] for mean, and x is mean -> b + db = db 
+        # since b = [0,..,0] for mean, and x is mean -> b + db = db
         b = db
 
         # limit b to be 3 standard deviations from the mean (eq 15)
@@ -197,7 +197,7 @@ def image_search(asm_model, image, threshold=70):
 #        plt.show()
 
 
-    
+
         # store the old suggestion of landmark to test if any change has happend
         image_x_old = image_x
  #       #image_x_old = scale_and_rotate(model_x+approx_dx, rotation_matrix)
@@ -232,14 +232,14 @@ def image_search(asm_model, image, threshold=70):
 #        plt.suptitle('image shape before and after pca', fontsize = 14)
 #        plt.show()
         if sum(abs(image_x-image_x_old)) < 100:
-            break        
+            break
     return b, (model_x + approx_dx)
 
 # find suggested changes in the image frame
-# arguments: image_x   : the current coordinats in the image frame, 
+# arguments: image_x   : the current coordinats in the image frame,
 #            image_diff: the differentiated image
 #            threshold : the threshold of when to choose another coordinat than the original
-# return   : list of the suggested changes in the image frame 
+# return   : list of the suggested changes in the image frame
 def adjustments_along_normal(image_x, image_diff, threshold):
     # image_diff[0] = x
     # image_diff = y
@@ -262,7 +262,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
         # the point to the left of current point
         x_left = xes[i-1]
         y_left = yes[i-1]
-        # 
+        #
         # wrap around
         x_right = xes[(i+1) % len(xes)]
         y_right = yes[(i+1) % len(yes)]
@@ -304,7 +304,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
         line_left  = np.array((x-x_left, y-y_left))
         line_right = np.array((x_right-x, y_right-y))
 
-        # norm_left and  norm_right are unit length        
+        # norm_left and  norm_right are unit length
         norm_left  = get_norm(line_left)
         norm_right = get_norm(line_right)
 
@@ -374,10 +374,10 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 else:
                     next_diff_value = image_diff[int(round(diff_y + norm_y))][int(round(diff_x + norm_x))]
 
-                if next_diff_value < diff_value:                  
+                if next_diff_value < diff_value:
                     diff_x_best, diff_y_best, pix_value_best = diff_x, diff_y, diff_value
                     #print('I CHOOSE YOOU!')
-                    break                                
+                    break
 
         diff_image_x[i*2]   = (diff_x_best-x)
         diff_image_x[i*2+1] = (diff_y_best-y)
@@ -437,7 +437,7 @@ def build_matrix(a_x, a_y):
 
 # rotate and scale the shape according to the R matrix
 def scale_and_rotate(shape, rotation_matrix):
-    # mean center to rotate 
+    # mean center to rotate
     xes = shape[::2]
     yes = shape[1::2]
     mean_xes = np.mean(xes)
@@ -452,8 +452,8 @@ def scale_and_rotate(shape, rotation_matrix):
         # the coordinates of the point to update
         l = np.array((M[k*2], M[k*2+1]))
         # rotating simply by dotting the rotation matrix and the cóordinate vector
-        L = np.append(L, np.dot(rotation_matrix, l)) 
-    
+        L = np.append(L, np.dot(rotation_matrix, l))
+
     # translate back to the original place in coordinate system
     L =  L  + mean_vector
     return L
@@ -493,7 +493,7 @@ def normalize_model(model_x, image, threshold, image_to_show):
     # create a vector going through the uppermost - and lowest point
     v1 = np.array((upper_x - lower_x, upper_y - lower_y))
     v2 = np.array((mod_upper_x - mod_lower_x, mod_upper_y - mod_lower_y))
-    
+
 #   # plotting of the normals
 #    plt.imshow(image_to_show,cmap = 'gray')
 #    plt.plot([mod_lower_x, mod_upper_x], [mod_lower_y, mod_upper_y], marker='.')
@@ -511,7 +511,7 @@ def normalize_model(model_x, image, threshold, image_to_show):
     # update parameters
     a_x = scale * a_x_tmp
     a_y = scale * a_y_tmp
-    
+
     return a_x, a_y, lower_x, lower_y
 
 
@@ -528,7 +528,7 @@ def angle_between(v1, v2):
 # normalize the image to have values between 0 and 255
 def normalize_image(image):
     flat_image = image.flatten()
-    # find min value and subtract this from all pixel values.  
+    # find min value and subtract this from all pixel values.
     min_value = min(flat_image)
     flat_image = flat_image - min_value
     # find max value and find out which scale is needed
@@ -560,33 +560,33 @@ def normalize_image(image):
 #image_print = cv2.imread('../data/train/27.jpg', 0)
 #image_print = cv2.imread('../data/train/60.jpg', 0)
 
-asm = construct()
+#asm = construct()
 # get all images
-test_list = os.listdir('../data/test/')
+#test_list = os.listdir('../data/test/')
 
-max_count = len(test_list)/2
+#max_count = len(test_list)/2
 
-i = 1
+#i = 1
 
-test_images = test_list
-test_images = ['108138.xml']
+#test_images = test_list
+#test_images = ['108138.xml']
 #
-for test_image in test_images:
-    # make sure we only test each image one time
-    if test_image.endswith('.xml'):
-
-        print(str(i) + ' of ' + str(max_count))
+#for test_image in test_images:
+#    # make sure we only test each image one time
+#    if test_image.endswith('.xml'):
+#
+#        print(str(i) + ' of ' + str(max_count))
 
         # remove the ending of the image
-        test_image = test_image[:-4]
+#        test_image = test_image[:-4]
 #        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
 #        :#or test_image == '68284':
 #            continue
 
-        print('image: ', test_image)
-        gray_image = parser.get_grayscale('../data/test/', test_image)
+#        print('image: ', test_image)
+#        gray_image = parser.get_grayscale('../data/test/', test_image)
 
-        image_features, landmarks = image_search(asm_model, gray_image)
+#        image_features, landmarks = image_search(asm_model, gray_image)
 
 
 #image_print = parser.get_grayscale('../data/test/', '103527.jpg')
@@ -597,14 +597,14 @@ for test_image in test_images:
 #image_search(asm_model, image_print)
 
 
-# PLOT HISTOGRAM 
+# PLOT HISTOGRAM
 #    image_flat = image_diff.flatten()
 #    for i in image_diff:
 #        if i > 14:
 #            print(i)
 #    int_image_flat = np.array(image_flat, dtype=int)
 #    print(max(int_image_flat))
-    
+
 #    diff_set = set(image_flat)
 #    hist, bin_edges = np.histogram(image_diff, bins = range(len(diff_set)+1))
 #    plt.bar(bin_edges[:-1], hist, width = 1)

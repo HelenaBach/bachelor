@@ -27,7 +27,7 @@ except:
     sys.exit(2)
 
 # ROC have fields True Positive (tp), False Positive (fp), number of species (number/p)
-# From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images 
+# From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images
 def update_ROC(class_id, tp=False, fp=False, number=False):
     if class_id in ROC:
         if tp:
@@ -56,37 +56,37 @@ def create_tables():
     # returns the mean shape, var_matrix, the principal axis and
     # a tuple of (variance, percentage of variance)
     mean, var_matrix, principal_axis, components = asm.construct()
-        
+
     # Table like image_table but for the test images.
     test_table = []
-    
+
     # get all images
     test_list = os.listdir(path_test)
-    
+
     pes = [13, 28, 50, 80]
 
     for p in pes:
 
         principal_axis = principal_axis[:p]
-    
+
         asm_model = (mean, var_matrix, principal_axis, components)
-        
+
         max_count = len(test_list)/2
-        
+
         i = 1
-        
+
         for test_image in test_list:
             # make sure we only test each image one time
             if test_image.endswith('.xml'):
                 im_struct = parser.init_image(path_test, test_image)
-        
+
                 print(str(i) + ' of ' + str(max_count))
-        
+
                 # remove the ending of the image
                 test_image = test_image[:-4]
-        
+
                 gray_image = parser.get_grayscale(path_test, test_image)
-                
+
                 if seg == 'otsu':
                     # OTSU
                     binary = segmentation.otsu(gray_image)
@@ -97,17 +97,17 @@ def create_tables():
                     # find the image features
                     image_features = np.dot(principal_axis, aligned_landmarks-mean)
                 else:
-                    # IMAGE SEARCH 
+                    # IMAGE SEARCH
                     image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
-        
+
                 im_struct['landmarks'] = landmarks
                 im_struct['feature_vector'] = image_features
-        
+
                 i += 1
 
                 test_table.append(im_struct)
 
-        with open('test_table_' + seg + '_pc' + str(p) + '.p', 'wb') as f:
+        with open('p_files/test_table_' + seg + '_pc' + str(p) + '.p', 'wb') as f:
             pickle.dump(test_table, f)
 
 
@@ -117,14 +117,14 @@ def classify(p):
     training_data = knn.construct()
 
     kes = [3, 5, 7, 9]
- 
+
     with open('test_table_' + seg + '_pc' + p + '.p', 'wb') as f:
         test_table = pickle.load(f)
 
     max_count = len(test_table)
-    
+
     for k in kes:
-        print('seg: ' + seg + ' - k : ' + str(k)) 
+        print('seg: ' + seg + ' - k : ' + str(k))
         i = 1
         correct = 0
 
@@ -132,18 +132,18 @@ def classify(p):
         ROC = {}
 
         for im_struct in test_table:
-    
-            # classify new image from training data    
+
+            # classify new image from training data
             # get a sorted list of the class id and the number of votes
             label_candidates = knn.classify(training_data, im_struct['feature_vector'], k)
-    
+
             # label_candidates[0][0] should give the classification
             label = str(int(label_candidates[0][0]))
-            
+
             im_struct['label_candidates'] = label_candidates
             im_struct['prediction'] = True
             class_id = im_struct['class_id']
-            
+
             print(label, class_id)
             if class_id == label:
                 correct += 1
@@ -152,9 +152,9 @@ def classify(p):
                 update_ROC(class_id, number=True)
                 update_ROC(label, fp=True)
                 im_struct['prediction'] = False
-            
+
             i += 1
-        
+
         print('accuracy: ', correct/ max_count)
         print('correct: ', correct)
 
