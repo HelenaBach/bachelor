@@ -257,6 +257,8 @@ def adjustments_along_normal(image_x, image_diff, threshold):
     xes = image_x[::2]
     yes = image_x[1::2]
 
+    #
+    points_got_same_coordinats = 0
     # find dX -> the suggested changes in the image frame
     for i in range(len(xes)):
         #print('point nr. ', i)
@@ -281,8 +283,12 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 k += 1
                 # if all points have the same coordinates
                 if k == len(xes):
+                    points_got_same_coordinats = 1
                     print('all points have same coordinates')
                     #sys.exit(2)
+                    break
+        if points_got_same_coordinats == 1:
+            break
 
         # if the two points are placed at the same coordinat
         if x_right-x == 0 and y_right-y == 0:
@@ -295,8 +301,11 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 # we don't look at the points that x_left has already looked at
                 if l == len(xes)-k:
                     print('all points have same coordinates')
+                    points_got_same_coordinats = 1
                     #sys.exit(2)
 
+        if points_got_same_coordinats == 1:
+            break
 
         line_left  = np.array((x-x_left, y-y_left))
         line_right = np.array((x_right-x, y_right-y))
