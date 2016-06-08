@@ -1,8 +1,13 @@
 import numpy as np
 from table import image_table
 import sys
+import pickle
 
 def construct():
+	if not image_table:
+		with open('image_table.p', 'rb') as f:
+			image_table = pickle.load(f)
+
 	training_data = []
 	for image_struct in image_table:
 		# To ensure same type for all elements in the list -> change to float

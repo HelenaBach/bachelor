@@ -100,7 +100,7 @@ for test_image in test_images:
         #image_features = np.dot(principal_axis, aligned_landmarks-mean)
         # NU TESTER VI IKKE MERE
         # return a feature vector + landmarks XXXXXXXXX MÅSKE??? XXXXXX
-        image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
+        #image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
 
 
         # classify new image from training data
