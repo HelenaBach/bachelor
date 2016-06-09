@@ -43,6 +43,8 @@ def knn_show_accuracy():
         tp_rate = TP / P
         # find accuracy
         accuracy = (TP + TN) / (P + N)
+
+        F MEASURE!
         #print(specie, ' accuracy: ', accuracy)
         ROC_table[specie]['fp_rate']  = fp_rate
         ROC_table[specie]['tp_rate']  = tp_rate
@@ -51,6 +53,7 @@ def knn_show_accuracy():
             precision = 0
         else:
             precision = TP/(TP + FP)
+        ROC_table[specie]['precision'] = precision
         if P > 4:
             print('number images: ', P)
             print('recall: ', tp_rate)
