@@ -66,17 +66,15 @@ def create_tables():
 
     # get all images
     test_list = os.listdir(path_test)
-    test_list = ['11819.xml']
+    #test_list = ['11819.xml']
 
-    pes = [13]#, 28, 50, 80]
+    pes = [13, 28, 50, 80]
 
     for p in pes:
         print('p: ', p)
         test_table = []
-<<<<<<< HEAD
         #print('test_table: ', test_table)
-=======
->>>>>>> e16b417b340a0705cc0a7367ccb0205cb84594f1
+
         # update feature vectors in image table
         # returns the mean shape, var_matrix, the principal axis and
         # a tuple of (variance, percentage of variance)
@@ -180,6 +178,6 @@ def classify(p):
         toe = (time.time() - start_time)
         times.append(toe)
 
-#create_tables()
-classify(50) #-> p = [13, 28, 50, 80]
-print(times)
+create_tables()
+#classify(50) #-> p = [13, 28, 50, 80]
+#print(times)
