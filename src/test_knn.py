@@ -70,10 +70,6 @@ def knn_show_accuracy():
         ROC_table[specie]['precision'] = "{0:.3f}".format(precision)
         ROC_table[specie]['f_measure'] = "{0:.3f}".format(f_measure)
 
-        #ROC_table[specie]['fp_rate']   = fp_rate
-        #ROC_table[specie]['tp_rate']   = tp_rate # RECALLLLL
-        #ROC_table[specie]['precision'] = precision
-        #ROC_table[specie]['f_measure'] = f_measure
 
     with open('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'wb') as f:
         pickle.dump(ROC_table, f)
