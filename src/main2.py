@@ -62,8 +62,9 @@ def create_tables():
 
     # get all images
     test_list = os.listdir(path_test)
+    test_list = ['11796.xml']
 
-    pes = [13, 28, 50, 80]
+    pes = [13]#, 28, 50, 80]
 
     for p in pes:
         print('p: ', p)
@@ -103,7 +104,7 @@ def create_tables():
                     image_features = np.dot(principal_axis, aligned_landmarks-mean)
                 else:
                     # IMAGE SEARCH
-                    image_features, landmarks = asm_uncentered.image_search(asm_model, gray_image)
+                    image_features, landmarks = asm.image_search(asm_model, gray_image)
 
                 im_struct['landmarks'] = landmarks
                 im_struct['feature_vector'] = image_features
@@ -112,7 +113,7 @@ def create_tables():
 
                 test_table.append(im_struct)
 
-        with open('p_files/test_table_' + seg + '_pc' + str(p) + '.p', 'wb') as f:
+        with open('p_files/test_table_' + seg + '_pc' + str(p) + '_lort.p', 'wb') as f:
             pickle.dump(test_table, f)
         print('the test table was created')
 
