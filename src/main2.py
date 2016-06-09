@@ -109,7 +109,7 @@ def create_tables():
                     image_features = np.dot(principal_axis, aligned_landmarks-mean)
                 else:
                     # IMAGE SEARCH
-                    image_features, landmarks = asm.image_search(asm_model, gray_image)
+                    image_features, landmarks = asm.image_search(asm_model, gray_image, test_image)
 
                 im_struct['landmarks'] = landmarks
                 im_struct['feature_vector'] = image_features
