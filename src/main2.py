@@ -13,6 +13,7 @@ import math
 import pickle
 import random # test knn
 import numpy as np
+import time # to print time of execution
 
 try:
 	path_test = sys.argv[1]
@@ -26,9 +27,11 @@ except:
     print("Say 'otsu' or 'ims' to specify which segmentation to use. ")
     sys.exit(2)
 
+# time list
+times = []
 
 # list of all test images and their predictions.
-ROC = {}
+#ROC = {}
 
 # ROC have fields True Positive (tp), False Positive (fp), number of species (number/p)
 # From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images
@@ -54,6 +57,7 @@ def update_ROC(ROC, class_id, tp=False, fp=False, number=False):
             ROC[class_id]['number'] = 1
         else:
             ROC[class_id]['number'] = 0
+    return ROC
 
 def create_tables():
 
@@ -69,6 +73,10 @@ def create_tables():
     for p in pes:
         print('p: ', p)
         test_table = []
+<<<<<<< HEAD
+        #print('test_table: ', test_table)
+=======
+>>>>>>> e16b417b340a0705cc0a7367ccb0205cb84594f1
         # update feature vectors in image table
         # returns the mean shape, var_matrix, the principal axis and
         # a tuple of (variance, percentage of variance)
@@ -83,6 +91,7 @@ def create_tables():
         for test_image in test_list:
             # make sure we only test each image one time
             if test_image.endswith('.xml'):
+                print('BILLEDE NUMMER:', test_image)
                 im_struct = parser.init_image(path_test, test_image)
 
                 print(str(i) + ' of ' + str(max_count))
@@ -112,7 +121,7 @@ def create_tables():
 
                 test_table.append(im_struct)
 
-        with open('p_files/test_table_' + seg + '_pc' + str(p) + '_lort.p', 'wb') as f:
+        with open('p_files/test_table_' + seg + '_pc' + str(p) + '_lort2.p', 'wb') as f:
             pickle.dump(test_table, f)
         print('the test table was created')
 
@@ -130,6 +139,7 @@ def classify(p):
     max_count = len(test_table)
 
     for k in kes:
+        start_time = time.time()
         print('seg: ' + seg + ' - k : ' + str(k))
         i = 1
         correct = 0
@@ -167,6 +177,9 @@ def classify(p):
         with open('p_files/ROC_table_' + seg + '_pc' + str(p) + '_k' + str(k) + '.p', 'wb') as f:
             pickle.dump(ROC, f)
 
+        toe = (time.time() - start_time)
+        times.append(toe)
 
-create_tables()
-#classify(13) #-> p = [13, 28, 50, 80]
+#create_tables()
+classify(50) #-> p = [13, 28, 50, 80]
+print(times)

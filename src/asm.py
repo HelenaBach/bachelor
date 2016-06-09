@@ -318,6 +318,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                 if l == len(xes)-k:
                     points_got_same_coordinats = 1
                     #sys.exit(2)
+                    break
 
         if points_got_same_coordinats == 1:
             return np.array(())
