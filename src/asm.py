@@ -71,8 +71,8 @@ def image_search(asm_model, image, test_image, threshold=70):
     image_diff = sigma * gaussian_gradient_magnitude(image_tmp, sigma=sigma)
     image_diff = normalize_image(image_diff)
 
-    plt.imshow(image_diff,cmap = 'gray')
-    plt.show()
+#    plt.imshow(image_diff,cmap = 'gray')
+#    plt.show()
 
     # The landmarks within the model is the meanshape
     model_x = np.copy(mean )
@@ -567,61 +567,61 @@ def normalize_image(image):
 
 
 ###############################
-#
-#
+
+
 #with open('p_files/test_asm_model_p13.p', 'rb') as f:
 #   asm_model = pickle.load(f)
-#
-##print('tests image: ', image)
-##image_print = cv2.imread('../data/train/687.jpg', 0)
-##image_print = cv2.imread('../data/test/15252.jpg', 0)
-##image_print = cv2.imread('../data/train/891.jpg', 0)
-##image_print = cv2.imread('../data/train/27.jpg', 0)
-##image_print = cv2.imread('../data/train/60.jpg', 0)
-#
-##asm_model = construct(13)
-##with open('p_files/test_asm_model_p13.p', 'wb') as f:
-##    pickle.dump(asm_model, f)
-## get all images
+
+#print('tests image: ', image)
+#image_print = cv2.imread('../data/train/687.jpg', 0)
+#image_print = cv2.imread('../data/test/15252.jpg', 0)
+#image_print = cv2.imread('../data/train/891.jpg', 0)
+#image_print = cv2.imread('../data/train/27.jpg', 0)
+#image_print = cv2.imread('../data/train/60.jpg', 0)
+
+#asm_model = construct(13)
+#with open('p_files/test_asm_model_p13.p', 'wb') as f:
+#    pickle.dump(asm_model, f)
+# get all images
 #test_list = os.listdir('../data/test/')
-#
-#max_count = len(test_list)/2
-#
+
+#max_count = 1 #len(test_list)/2
+
 #i = 1
-#
+
 #test_images = test_list
-##test_images = ['11819.xml']
-#
+#test_images = ['11819.xml']
+
 #for test_image in test_images:
-#    # make sure we only test each image one time
+    # make sure we only test each image one time
 #    if test_image.endswith('.xml'):
-#
+
 #        print(str(i) + ' of ' + str(max_count))
-#
-#        # remove the ending of the image
+
+        # remove the ending of the image
 #        test_image = test_image[:-4]
-##        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
-##        :#or test_image == '68284':
-##            continue
-#
+#        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
+#        :#or test_image == '68284':
+#            continue
+
 #        print('image: ', test_image)
-#        gray_image = parser.get_grayscale('../data/test/', test_image)
+ #       gray_image = parser.get_grayscale('../data/test/', test_image)
+
+  #      image_features, landmarks = image_search(asm_model, gray_image)
+
+
+#image_print = parser.get_grayscale('../data/test/', '103527.jpg')
 #
-#        image_features, landmarks = image_search(asm_model, gray_image, test_image)
+#plt.imshow(image_print,cmap = 'gray')
+#plt.show()
 #
-#
-##image_print = parser.get_grayscale('../data/test/', '103527.jpg')
-##
-##plt.imshow(image_print,cmap = 'gray')
-##plt.show()
-##
-##image_search(asm_model, image_print)
-#
-#
-## PLOT HISTOGRAM
-##    image_flat = image_diff.flatten()
-##    for i in image_diff:
-##        if i > 14:
+#image_search(asm_model, image_print)
+
+
+# PLOT HISTOGRAM
+#    image_flat = image_diff.flatten()
+#    for i in image_diff:
+#        if i > 14:
 #            print(i)
 #    int_image_flat = np.array(image_flat, dtype=int)
 #    print(max(int_image_flat))
