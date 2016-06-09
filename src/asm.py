@@ -552,10 +552,7 @@ def normalize_image(image):
 ###############################
 
 
-#with open('test_image_search_image.p', 'rb') as f:
-#   image = pickle.load(f)
-#
-#with open('test_image_search_model.p', 'rb') as f:
+#with open('p_files/test_asm_model_p13.p', 'rb') as f:
 #   asm_model = pickle.load(f)
 
 #print('tests image: ', image)
@@ -565,33 +562,35 @@ def normalize_image(image):
 #image_print = cv2.imread('../data/train/27.jpg', 0)
 #image_print = cv2.imread('../data/train/60.jpg', 0)
 
-#asm = construct()
+asm_model = construct(13)
+with open('p_files/test_asm_model_p13.p', 'wb') as f:
+    pickle.dump(asm_model, f)
 # get all images
 #test_list = os.listdir('../data/test/')
 
-#max_count = len(test_list)/2
+max_count = 1 #len(test_list)/2
 
-#i = 1
+i = 1
 
 #test_images = test_list
-#test_images = ['108138.xml']
-#
-#for test_image in test_images:
-#    # make sure we only test each image one time
-#    if test_image.endswith('.xml'):
-#
-#        print(str(i) + ' of ' + str(max_count))
+test_images = ['11819.xml']
+
+for test_image in test_images:
+    # make sure we only test each image one time
+    if test_image.endswith('.xml'):
+
+        print(str(i) + ' of ' + str(max_count))
 
         # remove the ending of the image
-#        test_image = test_image[:-4]
+        test_image = test_image[:-4]
 #        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
 #        :#or test_image == '68284':
 #            continue
 
-#        print('image: ', test_image)
-#        gray_image = parser.get_grayscale('../data/test/', test_image)
+        print('image: ', test_image)
+        gray_image = parser.get_grayscale('../data/test/', test_image)
 
-#        image_features, landmarks = image_search(asm_model, gray_image)
+        image_features, landmarks = image_search(asm_model, gray_image)
 
 
 #image_print = parser.get_grayscale('../data/test/', '103527.jpg')
