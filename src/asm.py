@@ -301,6 +301,7 @@ def adjustments_along_normal(image_x, image_diff, threshold):
                     print('all points have same coordinates')
                     points_got_same_coordinats = 1
                     #sys.exit(2)
+                    break
 
         if points_got_same_coordinats == 1:
             break
