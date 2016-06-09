@@ -14,13 +14,13 @@ import pca
 #with open(im_table, 'rb') as f:
 #    img_table = pickle.load(f)
 
-with open('mean_centered_test.p', 'rb') as f:
+with open('p_files/mean.p', 'rb') as f:
     mean = pickle.load(f)
 
-with open('image_table_centered_test.p', 'rb') as f:
+with open('p_files/image_table.p', 'rb') as f:
     image_table = pickle.load(f)
 
-with open('image_table_unaligned.p', 'rb') as f:
+with open('p_files/image_table_unaligned.p', 'rb') as f:
     image_table_unaligned = pickle.load(f)
 
 #with open('pca.p', 'rb') as f:

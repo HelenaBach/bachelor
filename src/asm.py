@@ -14,7 +14,7 @@ from scipy.ndimage.filters import gaussian_gradient_magnitude
 import math
 import os
 
-def construct():
+def construct(p):
     with open('p_files/mean.p', 'rb') as f:
         mean = pickle.load(f)
 
@@ -38,7 +38,7 @@ def construct():
         data.append(landmarks)
 
     # run pca
-    principal_axis, comp_variance = pca.fit(data, mean, 200)
+    principal_axis, comp_variance = pca.fit(data, mean, p)
 
 
     for im_struct in image_table:
@@ -47,6 +47,9 @@ def construct():
 
         # translate data into PCA space
         im_struct['feature_vector'] = np.dot(principal_axis, shape)
+
+    with open('p_files/image_table_p' + str(p) + '.p', 'wb') as f:
+        pickle.dump(image_table, f)
 
     return mean, var_matrix, principal_axis, comp_variance
 

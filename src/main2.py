@@ -26,9 +26,13 @@ except:
     print("Say 'otsu' or 'ims' to specify which segmentation to use. ")
     sys.exit(2)
 
+
+# list of all test images and their predictions.
+ROC = {}
+
 # ROC have fields True Positive (tp), False Positive (fp), number of species (number/p)
 # From this, we can find False Negative (fn) = p-tp, and True Negative (tn) = (p+n) - (tp + fp + fn), n = all images
-def update_ROC(class_id, tp=False, fp=False, number=False):
+def update_ROC(ROC, class_id, tp=False, fp=False, number=False):
     if class_id in ROC:
         if tp:
             ROC[class_id]['tp'] += 1
@@ -52,10 +56,6 @@ def update_ROC(class_id, tp=False, fp=False, number=False):
             ROC[class_id]['number'] = 0
 
 def create_tables():
-    # update feature vectors in image table
-    # returns the mean shape, var_matrix, the principal axis and
-    # a tuple of (variance, percentage of variance)
-    mean, var_matrix, principal_axis, components = asm.construct()
 
     # Table like image_table but for the test images.
     test_table = []
@@ -66,8 +66,11 @@ def create_tables():
     pes = [13, 28, 50, 80]
 
     for p in pes:
-
-        principal_axis = principal_axis[:p]
+        test_table = []
+        # update feature vectors in image table
+        # returns the mean shape, var_matrix, the principal axis and
+        # a tuple of (variance, percentage of variance)
+        mean, var_matrix, principal_axis, components = asm.construct(p)
 
         asm_model = (mean, var_matrix, principal_axis, components)
 
@@ -114,11 +117,11 @@ def create_tables():
 def classify(p):
 
     # return list of feature vectores from image table
-    training_data = knn.construct()
+    training_data = knn.construct(p)
 
     kes = [3, 5, 7, 9]
 
-    with open('test_table_' + seg + '_pc' + p + '.p', 'wb') as f:
+    with open('p_files/test_table_' + seg + '_pc' + str(p) + '.p', 'rb') as f:
         test_table = pickle.load(f)
 
     max_count = len(test_table)
@@ -127,10 +130,7 @@ def classify(p):
         print('seg: ' + seg + ' - k : ' + str(k))
         i = 1
         correct = 0
-
-        # list of all test images and their predictions.
         ROC = {}
-
         for im_struct in test_table:
 
             # classify new image from training data
@@ -147,10 +147,10 @@ def classify(p):
             print(label, class_id)
             if class_id == label:
                 correct += 1
-                update_ROC(class_id, tp=True, number=True)
+                ROC = update_ROC(ROC, class_id, tp=True, number=True)
             else:
-                update_ROC(class_id, number=True)
-                update_ROC(label, fp=True)
+                ROC = update_ROC(ROC, class_id, number=True)
+                ROC = update_ROC(ROC, label, fp=True)
                 im_struct['prediction'] = False
 
             i += 1
@@ -158,12 +158,12 @@ def classify(p):
         print('accuracy: ', correct/ max_count)
         print('correct: ', correct)
 
-        with open('test_table_.p', 'wb') as f:
+        with open('p_files/test_table_' + seg + '_pc' + str(p) + '_k' + str(k) + '.p', 'wb') as f:
                 pickle.dump(test_table, f)
 
-        with open('ROC_table_k' + str(k) + '.p', 'wb') as f:
+        with open('p_files/ROC_table_' + seg + '_pc' + str(p) + '_k' + str(k) + '.p', 'wb') as f:
             pickle.dump(ROC, f)
 
 
 create_tables()
-#classify(p) -> p = [13, 28, 50, 80]
+#classify(13) #-> p = [13, 28, 50, 80]

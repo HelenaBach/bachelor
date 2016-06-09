@@ -3,26 +3,25 @@ from table import image_table
 import sys
 import pickle
 
-def construct():
-	if not image_table:
-		with open('image_table.p', 'rb') as f:
-			image_table = pickle.load(f)
+def construct(p):
+    with open('p_files/image_table_p' + str(p) + '.p', 'rb') as f:
+        image_table = pickle.load(f)
 
-	training_data = []
-	for image_struct in image_table:
+    training_data = []
+    for image_struct in image_table:
 		# To ensure same type for all elements in the list -> change to float
-		knn_vector = np.append(image_struct['feature_vector'], float(image_struct['class_id']))
-		training_data.append(knn_vector)
+        knn_vector = np.append(image_struct['feature_vector'], float(image_struct['class_id']))
+        training_data.append(knn_vector)
 
-	return training_data
+    return training_data
 
 # return the squared euclidean distance of the two vectores
 # since square root is monotonic, no need to find the euclidean distance
 def squared_euclidean_distance(vector1, vector2, length):
-	distance = 0
-	for x in range(length):
-		distance += (vector1[x] - vector2[x])**2
-	return distance
+    distance = 0
+    for x in range(length):
+        distance += (vector1[x] - vector2[x])**2
+    return distance
 
 def getNeighbors(trainingSet, testInstance, k):
     distances = []
