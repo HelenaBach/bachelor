@@ -66,14 +66,16 @@ def create_tables():
     pes = [13, 28, 50, 80]
 
     for p in pes:
+        print('p: ', p)
         test_table = []
+        print('test_table: ', test_table)
         # update feature vectors in image table
         # returns the mean shape, var_matrix, the principal axis and
         # a tuple of (variance, percentage of variance)
         mean, var_matrix, principal_axis, components = asm.construct(p)
 
         asm_model = (mean, var_matrix, principal_axis, components)
-
+        print('the model was created')
         max_count = len(test_list)/2
 
         i = 1
@@ -112,6 +114,7 @@ def create_tables():
 
         with open('p_files/test_table_' + seg + '_pc' + str(p) + '.p', 'wb') as f:
             pickle.dump(test_table, f)
+        print('the test table was created')
 
 
 def classify(p):
