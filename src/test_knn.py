@@ -1,26 +1,43 @@
 ### Statistics and evaluation of knn prediction
 
-import numpy as np 
+import numpy as np
 import pickle
-import sys 
-from matplotlib import pyplot as plt 
+import sys
+from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 #with open ('test_table.p', 'rb') as f:
 #	test_table = pickle.load(f)
 
-with open ('ROC_table.p', 'rb') as f:
-    ROC_table = pickle.load(f)
+
+try:
+    seg = sys.argv[1]
+except:
+    print("Say 'otsu' or 'ims' to specify which segmentation to use. ")
+    sys.exit(2)
+
+try:
+	p = sys.argv[2]
+except:
+	print('specify number of PCs')
+	sys.exit(2)
+
+try:
+	k = sys.argv[3]
+except:
+	print('specify k')
+	sys.exit(2)
 
 ## show accuracy of classifier on the testset using cross validation with the given amount of folds
-### arguments : 
-### return    : the accuracy of the classifier 
+### arguments :
+### return    : the accuracy of the classifier
 def knn_show_accuracy():
-    with open ('ROC_table.p', 'rb') as f:
+    with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
         ROC_table = pickle.load(f)
 
     number_of_instances = sum(item['number'] for item in ROC_table.values())
-    sum_fp = sum(item['fp'] for item in ROC_table.values())
-    sum_tp = sum(item['tp'] for item in ROC_table.values())
+    # HVAD BRUGER VI DEM HER TIL????
+    #sum_fp = sum(item['fp'] for item in ROC_table.values())
+    #sum_tp = sum(item['tp'] for item in ROC_table.values())
 
     # for each spieces
     for specie in ROC_table:
@@ -36,42 +53,45 @@ def knn_show_accuracy():
         FN = P - TP
         # True Negative
         TN = (P + N) - (TP + FP + FN)
-
         #find fp rate fp/N
         fp_rate = FP / N
-        # find tp rate tp/P
+        # find tp rate tp/P - RECALL
         tp_rate = TP / P
-        # find accuracy
-        accuracy = (TP + TN) / (P + N)
-
-        F MEASURE!
-        #print(specie, ' accuracy: ', accuracy)
-        ROC_table[specie]['fp_rate']  = fp_rate
-        ROC_table[specie]['tp_rate']  = tp_rate
-        ROC_table[specie]['accuracy'] = accuracy
-        if TP == 0:
-            precision = 0
-        else:
+        # find precision and find F-measure (WE DO NOT WANT TO DIVIDE BY ZERO!)
+        precision = 0
+        f_measure = 0
+        if not TP == 0:
             precision = TP/(TP + FP)
-        ROC_table[specie]['precision'] = precision
-        if P > 4:
-            print('number images: ', P)
-            print('recall: ', tp_rate)
-            print('precision ', precision)
+            f_measure = 2/((1/precision)+(1/tp_rate))
 
-    with open('ROC_table.p', 'wb') as f:
+        #print(specie, ' accuracy: ', accuracy)
+        ROC_table[specie]['fp_rate']   = "{0:.3f}".format(fp_rate)
+        ROC_table[specie]['tp_rate']   = "{0:.3f}".format(tp_rate) # RECALLLLL
+        ROC_table[specie]['precision'] = "{0:.3f}".format(precision)
+        ROC_table[specie]['f_measure'] = "{0:.3f}".format(f_measure)
+
+        #ROC_table[specie]['fp_rate']   = fp_rate
+        #ROC_table[specie]['tp_rate']   = tp_rate # RECALLLLL
+        #ROC_table[specie]['precision'] = precision
+        #ROC_table[specie]['f_measure'] = f_measure
+
+    with open('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'wb') as f:
         pickle.dump(ROC_table, f)
 
 
 def get_accuracies():
-    with open ('ROC_table.p', 'rb') as f:
+    with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
         ROC_table = pickle.load(f)
 
-    with open ('species_stats.p', 'rb') as f:
+    with open ('p_files/species_stats.p', 'rb') as f:
         species_table = pickle.load(f)
-    print('Specie - Number of Train - Number of Test - Accuracy')
-    for specie in ROC_table:
-        print(specie, ' & ', species_table[specie], ' & ', ROC_table[specie]['number'], ' & ', ROC_table[specie]['accuracy'],  '\\\\')
+
+    sort_by_specie = sorted(ROC_table.items(), key=lambda item:int(item[0]))
+    print(sort_by_specie[0])
+    print('Specie - Number of Train - Number of Test - Recall - Precision - F-measure')
+    for specie_tup in sort_by_specie:
+        specie = specie_tup[0]
+        print(specie, ' & ', species_table[specie], ' & ', ROC_table[specie]['number'], ' & ', ROC_table[specie]['tp_rate'], ' & ', ROC_table[specie]['precision'], ' & ', ROC_table[specie]['f_measure'], '\\\\')
 
 
 def plot_ROC():
@@ -87,7 +107,7 @@ def plot_ROC():
     plt.scatter(xes, yes, marker = 'o')
     for label, x, y in zip(labels, xes, yes):
         plt.annotate(
-            label, 
+            label,
             xy = (x, y), xytext = (0.1, 0.1),
             textcoords = 'offset points', ha = 'right', va = 'bottom',
             #bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
@@ -98,5 +118,5 @@ def plot_ROC():
     plt.show()
 
 knn_show_accuracy()
-#get_accuracies()
-plot_ROC()
+get_accuracies()
+#plot_ROC()

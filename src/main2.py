@@ -73,10 +73,7 @@ def create_tables():
     for p in pes:
         print('p: ', p)
         test_table = []
-<<<<<<< HEAD
         #print('test_table: ', test_table)
-=======
->>>>>>> e16b417b340a0705cc0a7367ccb0205cb84594f1
         # update feature vectors in image table
         # returns the mean shape, var_matrix, the principal axis and
         # a tuple of (variance, percentage of variance)
@@ -181,5 +178,5 @@ def classify(p):
         times.append(toe)
 
 #create_tables()
-classify(50) #-> p = [13, 28, 50, 80]
+classify(80) #-> p = [13, 28, 50, 80]
 print(times)
