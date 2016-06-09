@@ -27,21 +27,21 @@ def construct(p):
     # If the data is not pre-aligned, aligner.the_real_aligner() should
     # be run.
 
-    # hack to fill the image table
-    for img in old_image_table:
-        image_table.append(img)
+#    # hack to fill the image table
+#    for img in old_image_table:
+#        image_table.append(img)
 
     # create data list
     data = []
-    for im_struct in image_table:
+    for im_struct in old_image_table:
         landmarks = im_struct['landmarks']
         data.append(landmarks)
 
     # run pca
     principal_axis, comp_variance = pca.fit(data, mean, p)
+    print('data is fitted')
 
-
-    for im_struct in image_table:
+    for im_struct in old_image_table:
         # mean centred shape
         shape = im_struct['landmarks'] - mean
 
@@ -49,8 +49,9 @@ def construct(p):
         im_struct['feature_vector'] = np.dot(principal_axis, shape)
 
     with open('p_files/image_table_p' + str(p) + '.p', 'wb') as f:
-        pickle.dump(image_table, f)
+        pickle.dump(old_image_table, f)
 
+    print('image table is dumped')
     return mean, var_matrix, principal_axis, comp_variance
 
 
