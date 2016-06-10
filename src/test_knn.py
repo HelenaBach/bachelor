@@ -154,7 +154,7 @@ def plot_ROC():
 #    ax.set_ylabel('Percentage of Variance')
     plt.show()
 
-def averages():
+def averages(seg, p, k):
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
         ROC_table = pickle.load(f)
 
@@ -162,19 +162,20 @@ def averages():
     recall_sum_percentage = recall_sum * 100.0
     recall_average = recall_sum_percentage / len(ROC_table)
 
-    print('Average of recall for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', recall_average)
+    #print('Average of recall for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', recall_average)
 
     precision_sum = sum(float(item['precision']) for item in ROC_table.values())
     precision_sum_percentage = precision_sum * 100.0
     precision_average = precision_sum_percentage / len(ROC_table)
 
-    print('Average of precision for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', precision_average)
+    #print('Average of precision for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', precision_average)
 
     f_sum = sum(float(item['f_measure']) for item in ROC_table.values())
     f_sum_percentage = f_sum * 100.0
     f_average = f_sum_percentage / len(ROC_table)
 
-    print('Average of F-measure for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', f_average)
+    #print('Average of F-measure for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', f_average)
+    return recall_average, precision_average, f_average
 
 
 
