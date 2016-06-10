@@ -1,0 +1,67 @@
+Accuracy of otsu with 13 PCs and k = 3 29.774
+Accuracy of otsu with 13 PCs and k = 5 32.453
+Accuracy of otsu with 13 PCs and k = 7 33.448
+Accuracy of otsu with 13 PCs and k = 9 33.716
+Accuracy of otsu with 28 PCs and k = 3 40.375
+Accuracy of otsu with 28 PCs and k = 5 40.911
+Accuracy of otsu with 28 PCs and k = 7 41.255
+Accuracy of otsu with 28 PCs and k = 9 40.643
+Accuracy of otsu with 50 PCs and k = 3 43.628
+Accuracy of otsu with 50 PCs and k = 5 43.284
+Accuracy of otsu with 50 PCs and k = 7 43.054
+Accuracy of otsu with 50 PCs and k = 9 42.939
+Accuracy of otsu with 80 PCs and k = 3 43.896
+Accuracy of otsu with 80 PCs and k = 5 43.092
+Accuracy of otsu with 80 PCs and k = 7 43.398
+Accuracy of otsu with 80 PCs and k = 9 43.016
+
+
+
+Average of recall for  otsu with  13  PCs and  3  neighbours  18.72062780269058
+Average of precision for  otsu with  13  PCs and  3  neighbours  20.504035874439456
+Average of F-measure for  otsu with  13  PCs and  3  neighbours  17.783408071748873
+Average of recall for  otsu with  13  PCs and  5  neighbours  18.86233183856502
+Average of precision for  otsu with  13  PCs and  5  neighbours  21.06278026905829
+Average of F-measure for  otsu with  13  PCs and  5  neighbours  17.999551569506732
+Average of recall for  otsu with  13  PCs and  7  neighbours  19.06950672645741
+Average of precision for  otsu with  13  PCs and  7  neighbours  21.154708520179373
+Average of F-measure for  otsu with  13  PCs and  7  neighbours  18.26547085201795
+Average of recall for  otsu with  13  PCs and  9  neighbours  18.742152466367713
+Average of precision for  otsu with  13  PCs and  9  neighbours  20.439910313901347
+Average of F-measure for  otsu with  13  PCs and  9  neighbours  17.88699551569507
+Average of recall for  otsu with  28  PCs and  3  neighbours  23.491928251121074
+Average of precision for  otsu with  28  PCs and  3  neighbours  24.36367713004485
+Average of F-measure for  otsu with  28  PCs and  3  neighbours  22.350224215246637
+Average of recall for  otsu with  28  PCs and  5  neighbours  22.813901345291473
+Average of precision for  otsu with  28  PCs and  5  neighbours  23.462331838565024
+Average of F-measure for  otsu with  28  PCs and  5  neighbours  21.682959641255607
+Average of recall for  otsu with  28  PCs and  7  neighbours  21.794170403587458
+Average of precision for  otsu with  28  PCs and  7  neighbours  22.834977578475343
+Average of F-measure for  otsu with  28  PCs and  7  neighbours  20.722421524663684
+Average of recall for  otsu with  28  PCs and  9  neighbours  21.208071748878936
+Average of precision for  otsu with  28  PCs and  9  neighbours  23.10941704035875
+Average of F-measure for  otsu with  28  PCs and  9  neighbours  20.290134529147995
+Average of recall for  otsu with  50  PCs and  3  neighbours  25.159641255605372
+Average of precision for  otsu with  50  PCs and  3  neighbours  26.37219730941704
+Average of F-measure for  otsu with  50  PCs and  3  neighbours  24.400448430493274
+Average of recall for  otsu with  50  PCs and  5  neighbours  23.706278026905824
+Average of precision for  otsu with  50  PCs and  5  neighbours  25.0067264573991
+Average of F-measure for  otsu with  50  PCs and  5  neighbours  22.876233183856513
+Average of recall for  otsu with  50  PCs and  7  neighbours  22.97668161434977
+Average of precision for  otsu with  50  PCs and  7  neighbours  24.577130044843045
+Average of F-measure for  otsu with  50  PCs and  7  neighbours  22.086995515695072
+Average of recall for  otsu with  50  PCs and  9  neighbours  22.682062780269064
+Average of precision for  otsu with  50  PCs and  9  neighbours  24.396860986547082
+Average of F-measure for  otsu with  50  PCs and  9  neighbours  21.813901345291487
+Average of recall for  otsu with  80  PCs and  3  neighbours  24.84529147982064
+Average of precision for  otsu with  80  PCs and  3  neighbours  26.5560538116592
+Average of F-measure for  otsu with  80  PCs and  3  neighbours  24.291928251121075
+Average of recall for  otsu with  80  PCs and  5  neighbours  23.575784753363227
+Average of precision for  otsu with  80  PCs and  5  neighbours  25.0304932735426
+Average of F-measure for  otsu with  80  PCs and  5  neighbours  22.8663677130045
+Average of recall for  otsu with  80  PCs and  7  neighbours  22.912107623318388
+Average of precision for  otsu with  80  PCs and  7  neighbours  24.259641255605384
+Average of F-measure for  otsu with  80  PCs and  7  neighbours  22.118834080717487
+Average of recall for  otsu with  80  PCs and  9  neighbours  22.474887892376692
+Average of precision for  otsu with  80  PCs and  9  neighbours  24.03632286995515
+Average of F-measure for  otsu with  80  PCs and  9  neighbours  21.717040358744406

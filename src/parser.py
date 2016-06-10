@@ -33,6 +33,14 @@ def init_image(path, file):
 
 	return img_struct
 
+def get_specie_name(path, file_name):
+    tree = etree.parse(path + file_name)
+    root = tree.getroot()
+
+    specie = root.find('Species').text
+
+    return specie
+
 # get image as a numpy array
 # arguments: the relative path to file directory, file
 # returns  : image as a numpy array
@@ -49,7 +57,7 @@ def get_image(path, file):
 		sys.exit(3)
 	return image
 
-# get gray scaled image as a numpy array
+# get gray scaled image asa numpy array
 # arguments: the relative path to file directory, file
 # returns  : gray scaled image as a numpy array
 def get_grayscale(path, file):

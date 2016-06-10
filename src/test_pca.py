@@ -23,10 +23,50 @@ with open('p_files/image_table.p', 'rb') as f:
 with open('p_files/image_table_unaligned.p', 'rb') as f:
     image_table_unaligned = pickle.load(f)
 
-#with open('pca.p', 'rb') as f:
-#     pca = pickle.load(f)
+with open('p_files/pca.p', 'rb') as f:
+    pca = pickle.load(f)
 
-#(principal_axis, comp_variance) = pca
+(principal_axis, comp_variance) = pca
+
+accum_var = 0
+accum_xes = []
+accum_yes = []
+for i in range(200):
+    accum_xes.append(i)
+    accum_yes.append(accum_var)
+    accum_var += comp_variance[i][1]
+    if i == 12 or i == 27 or i == 49 or i == 79:
+        print(accum_var)
+accum_xes.append(200)
+accum_yes.append(accum_var)
+fig, ax = plt.subplots(1, 1)
+plt.plot(accum_xes,accum_yes)
+plt.plot(13, 0.863269697318, marker='o')
+plt.plot(28, 0.950857778797, marker='o')
+plt.plot(50, 0.984771955942, marker='o')
+plt.plot(80, 0.995420329232, marker='o')
+ax.grid(zorder=0)
+#plt.suptitle('Accumulated Variance in Percentage', fontsize = 14)
+ax.set_xlabel('Principal Components')
+ax.set_ylabel('Percentage of Variance')
+minor_ticks = np.arange(-5, 220, 5)
+#ax.set_xticks(major_ticks)
+ax.set_xticks(minor_ticks, minor=True)
+ax.grid(which='both')
+# or if you want differnet settings for the grids:
+ax.grid(which='minor', alpha=0.2)
+ax.grid(which='major', alpha=0.5)
+ax.set_xlim([0,200])
+ax.set_ylim([0,1.05])
+#ax.set_yticks(major_ticks)
+#ax.set_yticks(minor_ticks, minor=True)
+plt.show()
+
+sys.exit(8)
+
+
+
+
 
 # plot the mean shape
 xes = mean[::2]
@@ -91,7 +131,7 @@ accum_yes.append(accum_var)
 fig, ax = plt.subplots(1, 1)
 plt.plot(accum_xes,accum_yes)
 ax.grid(zorder=0)
-plt.suptitle('Accumulated Variance in Percentage', fontsize = 14)
+#plt.suptitle('Accumulated Variance in Percentage', fontsize = 14)
 ax.set_xlabel('Principal Components')
 ax.set_ylabel('Percentage of Variance')
 minor_ticks = np.arange(-5, 220, 5)

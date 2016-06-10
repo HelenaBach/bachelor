@@ -43,6 +43,8 @@ def getResponse(neighbors):
         # last element is the class id
         response = neighbors[x][0][-1]
         dist = neighbors[x][1]
+        if dist < 1:
+            dist = 1
         if response in classVotes:
             classVotes[response] += 1/dist
         else:

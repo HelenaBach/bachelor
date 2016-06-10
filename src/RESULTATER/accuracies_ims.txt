@@ -1,0 +1,66 @@
+Accuracy of ims with 13 PCs and k = 3 13.241
+Accuracy of ims with 13 PCs and k = 5 14.275
+Accuracy of ims with 13 PCs and k = 7 14.811
+Accuracy of ims with 13 PCs and k = 9 14.849
+Accuracy of ims with 28 PCs and k = 3 14.237
+Accuracy of ims with 28 PCs and k = 5 15.040
+Accuracy of ims with 28 PCs and k = 7 15.385
+Accuracy of ims with 28 PCs and k = 9 15.806
+Accuracy of ims with 50 PCs and k = 3 12.706
+Accuracy of ims with 50 PCs and k = 5 12.782
+Accuracy of ims with 50 PCs and k = 7 13.280
+Accuracy of ims with 50 PCs and k = 9 13.548
+Accuracy of ims with 80 PCs and k = 3 10.639
+Accuracy of ims with 80 PCs and k = 5 11.290
+Accuracy of ims with 80 PCs and k = 7 11.366
+Accuracy of ims with 80 PCs and k = 9 11.902
+
+
+Average of recall for  ims with  13  PCs and  3  neighbours  5.313901345291479
+Average of precision for  ims with  13  PCs and  3  neighbours  5.101345291479819
+Average of F-measure for  ims with  13  PCs and  3  neighbours  4.456502242152466
+Average of recall for  ims with  13  PCs and  5  neighbours  5.656502242152467
+Average of precision for  ims with  13  PCs and  5  neighbours  4.814349775784753
+Average of F-measure for  ims with  13  PCs and  5  neighbours  4.551569506726459
+Average of recall for  ims with  13  PCs and  7  neighbours  5.850672645739912
+Average of precision for  ims with  13  PCs and  7  neighbours  5.563677130044844
+Average of F-measure for  ims with  13  PCs and  7  neighbours  4.662331838565024
+Average of recall for  ims with  13  PCs and  9  neighbours  5.750224215246637
+Average of precision for  ims with  13  PCs and  9  neighbours  5.367264573991032
+Average of F-measure for  ims with  13  PCs and  9  neighbours  4.54798206278027
+Average of recall for  ims with  28  PCs and  3  neighbours  6.336322869955157
+Average of precision for  ims with  28  PCs and  3  neighbours  6.261434977578476
+Average of F-measure for  ims with  28  PCs and  3  neighbours  5.349775784753365
+Average of recall for  ims with  28  PCs and  5  neighbours  6.137668161434978
+Average of precision for  ims with  28  PCs and  5  neighbours  5.411659192825112
+Average of F-measure for  ims with  28  PCs and  5  neighbours  4.919730941704038
+Average of recall for  ims with  28  PCs and  7  neighbours  6.138565022421526
+Average of precision for  ims with  28  PCs and  7  neighbours  5.313901345291481
+Average of F-measure for  ims with  28  PCs and  7  neighbours  4.883856502242154
+Average of recall for  ims with  28  PCs and  9  neighbours  6.392825112107623
+Average of precision for  ims with  28  PCs and  9  neighbours  5.857399103139014
+Average of F-measure for  ims with  28  PCs and  9  neighbours  5.255605381165922
+Average of recall for  ims with  50  PCs and  3  neighbours  5.750224215246635
+Average of precision for  ims with  50  PCs and  3  neighbours  5.579820627802689
+Average of F-measure for  ims with  50  PCs and  3  neighbours  4.58609865470852
+Average of recall for  ims with  50  PCs and  5  neighbours  5.192825112107622
+Average of precision for  ims with  50  PCs and  5  neighbours  4.218834080717489
+Average of F-measure for  ims with  50  PCs and  5  neighbours  4.01031390134529
+Average of recall for  ims with  50  PCs and  7  neighbours  5.109417040358743
+Average of precision for  ims with  50  PCs and  7  neighbours  4.945739910313902
+Average of F-measure for  ims with  50  PCs and  7  neighbours  4.102690582959642
+Average of recall for  ims with  50  PCs and  9  neighbours  4.971748878923767
+Average of precision for  ims with  50  PCs and  9  neighbours  4.308520179372198
+Average of F-measure for  ims with  50  PCs and  9  neighbours  3.8219730941704033
+Average of recall for  ims with  80  PCs and  3  neighbours  4.534977578475335
+Average of precision for  ims with  80  PCs and  3  neighbours  3.6999999999999997
+Average of F-measure for  ims with  80  PCs and  3  neighbours  3.4192825112107617
+Average of recall for  ims with  80  PCs and  5  neighbours  4.300000000000001
+Average of precision for  ims with  80  PCs and  5  neighbours  3.4605381165919287
+Average of F-measure for  ims with  80  PCs and  5  neighbours  3.2811659192825124
+Average of recall for  ims with  80  PCs and  7  neighbours  4.1363228699551575
+Average of precision for  ims with  80  PCs and  7  neighbours  3.374439461883408
+Average of F-measure for  ims with  80  PCs and  7  neighbours  3.157399103139014
+Average of recall for  ims with  80  PCs and  9  neighbours  4.386995515695067
+Average of precision for  ims with  80  PCs and  9  neighbours  3.2717488789237676
+Average of F-measure for  ims with  80  PCs and  9  neighbours  3.195515695067264

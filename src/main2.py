@@ -119,7 +119,7 @@ def create_tables():
 
                 test_table.append(im_struct)
 
-        with open('p_files/test_table_' + seg + '_pc' + str(p) + '_lort2.p', 'wb') as f:
+        with open('p_files/test_table_' + seg + '_pc' + str(p) + '.p', 'wb') as f:
             pickle.dump(test_table, f)
         print('the test table was created')
 
@@ -178,6 +178,6 @@ def classify(p):
         toe = (time.time() - start_time)
         times.append(toe)
 
-create_tables()
-#classify(50) #-> p = [13, 28, 50, 80]
-#print(times)
+#create_tables()
+classify(80) #-> p = [13, 28, 50, 80]
+print(times)
