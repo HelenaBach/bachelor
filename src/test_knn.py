@@ -178,9 +178,9 @@ def plot_PR():
     #plt.suptitle('PR graph ', fontsize = 14)
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
-    #plt.savefig('plots/PR_' + str(seg) + '.png')   # save the figure to file
-    #plt.close()
-    plt.show()
+    plt.savefig('plots/PR_' + str(seg) + '.png')   # save the figure to file
+    plt.close()
+    #plt.show()
 
 def plot_Precision():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -259,20 +259,20 @@ def plot_Recall():
     plt.subplots_adjust(bottom=0.1)
     #plt.plot([0,max(xes)],[0.24845291479820627,0.24845291479820627], ls="--")
     ax.scatter(xes, yes, marker = '.')
-    print('Recall')
-    for i, txt in enumerate(label):
-        if txt in interesting:
-        #if xes[i] > 100 and float(yes[i]) < 0.3 or xes[i] > 200:
-            print(txt)
-            #ax.annotate(parser.get_specie_name('../data/train/', str(species_name[txt][0]) + '.xml'), (xes[i],yes[i]))
-            ax.annotate(txt, (xes[i],yes[i]))
+    #print('Recall')
+    #for i, txt in enumerate(label):
+    #    if txt in interesting:
+    #    #if xes[i] > 100 and float(yes[i]) < 0.3 or xes[i] > 200:
+    #        print(txt)
+    #        #ax.annotate(parser.get_specie_name('../data/train/', str(species_name[txt][0]) + '.xml'), (xes[i],yes[i]))
+    #        ax.annotate(txt, (xes[i],yes[i]))
     ax = plt.gca()
     #plt.suptitle('Recall', fontsize = 14)
     ax.set_xlabel('Number of Instances')
     ax.set_ylabel('Recall')
-    #plt.savefig('plots/recall_' + str(seg) + '.png')   # save the figure to file
-    #plt.close()
-    plt.show()
+    plt.savefig('plots/recall_' + str(seg) + '.png')   # save the figure to file
+    plt.close()
+    #plt.show()
 
 def plot_fmeasure():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -308,22 +308,22 @@ def plot_fmeasure():
     plt.subplots_adjust(bottom=0.1)
     #plt.plot([0,max(xes)],[0.24845291479820627,0.24845291479820627], ls="--")
     ax.scatter(xes, yes, marker = '.')
-    print('F measure')
-    for i, txt in enumerate(label):
-        if txt in interesting and xes[i] > 200 or float(yes[i]) > 0.42:
-        #if xes[i] > 100 and float(yes[i]) < 0.3 or xes[i] > 200:
-            print(txt)
-            #ax.annotate(parser.get_specie_name('../data/train/', str(species_name[txt][0]) + '.xml'), (xes[i],yes[i]))
-            ax.annotate(txt, (xes[i],yes[i]))
+    #print('F measure')
+    #for i, txt in enumerate(label):
+    #    if txt in interesting and xes[i] > 200 or float(yes[i]) > 0.42:
+    #    #if xes[i] > 100 and float(yes[i]) < 0.3 or xes[i] > 200:
+    #        print(txt)
+    #        #ax.annotate(parser.get_specie_name('../data/train/', str(species_name[txt][0]) + '.xml'), (xes[i],yes[i]))
+    #        ax.annotate(txt, (xes[i],yes[i]))
     #axes = plt.gca()
     #plt.suptitle('F measure', fontsize = 14)
     ax.set_xlabel('Number of Instances')
     ax.set_ylabel('F-measure')
     minor_ticks = np.arange(0, 350, 10)
     ax.set_xticks(minor_ticks, minor=True)
-    #plt.savefig('plots/fmeasure_' + str(seg) + '.png')   # save the figure to file
-    #plt.close()
-    plt.show()
+    plt.savefig('plots/fmeasure_' + str(seg) + '.png')   # save the figure to file
+    plt.close()
+    #plt.show()
 
 
 def plot_FP():
@@ -348,13 +348,15 @@ def plot_FP():
 
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.1)
-    #ax.plot([0,max(xes)],[40,40], ls="--")
+    ax.plot([0,max(xes)],[70,70], ls="--")
     ax.scatter(xes, yes, marker = '.')
     print('FP')
     for i, txt in enumerate(label):
-        if yes[i] > 50 and not txt == '5128':# txt in  interesting or
+        if txt in ['1973', '54', '3288', '5128', '329', '4074']: #and not txt == '5128':# txt in  interesting or
+            if txt == '4074':
+                print(yes[i])
         #if yes[i] > 40 or xes[i] > 200:
-            print(txt)
+            #print(txt)
             #ax.annotate(parser.get_specie_name('../data/train/', str(species_name[txt][0]) + '.xml'), (xes[i],yes[i]))
             ax.annotate(txt, (xes[i],yes[i]))
     #for label, x, y in zip(labels, xes, yes):
@@ -367,9 +369,9 @@ def plot_FP():
 #    plt.suptitle('False Positive', fontsize = 14)
     ax.set_xlabel('Number of Instances')
     ax.set_ylabel('Number of Instances Incorrectly Labeled')
-    #plt.savefig('plots/fp_' + str(seg) + '.png')   # save the figure to file
-    #plt.close()
-    plt.show()
+    plt.savefig('plots/fp_' + str(seg) + '.png')   # save the figure to file
+    plt.close()
+    #plt.show()
 
 
  #FN/NUMBER = 1-RECALL -> USE THIS INSTEAD!
@@ -560,6 +562,11 @@ def something(class_id):
 
     return sorted_list[:7]
 
+for i in ['1973', '54', '3288', '5128', '329', '4074']:
+    find_species_ex_func.find_species_ex(i, 4, 'ims_')
+
+sys.exit(2)
+
 def plot_fmeasure():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
         ROC_table = pickle.load(f)
@@ -647,12 +654,13 @@ interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','395
 #for_3956 = [('3956', 17), ('3958', 6), ('5474', 4), ('4379', 4), ('1842', 4), ('5537', 2), ('1837', 2)]
 
 #find_species_ex_func.find_species_ex(30040, 2, 'imt_')
-plot_PR()
-plot_fmeasure()
-plot_Recall()
+
+#plot_PR()
+#plot_fmeasure()
+#plot_Recall()
 plot_FP()
 #plot_Precision_inv()
-plot_Precision()
+#plot_Precision()
 
 #from operator import itemgetter
 #something = something(6367)
