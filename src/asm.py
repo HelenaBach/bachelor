@@ -78,7 +78,7 @@ def image_search(asm_model, image, test_image, threshold=70):
     model_x = np.copy(mean )
 
     # normalize model_x to align the leaf in the image as good as possible
-    a_x, a_y, lower_x, lower_y = normalize_model(model_x, image_diff, threshold, image)
+    a_x, a_y, lower_x, lower_y, upper_x, upper_y = normalize_model(model_x, image_diff, threshold, image)
 
     # rotate model_x
     rotation_matrix = build_matrix(a_x, a_y)
@@ -101,14 +101,17 @@ def image_search(asm_model, image, test_image, threshold=70):
     b = np.array((0.0))
     b = np.tile(b, len(principal_axis))
 
-#    # plot of the initial placement of the landmark within the image frame
-#    img_xes = image_x[::2]
-#    img_yes = image_x[1::2]
-#    plt.imshow(image,cmap = 'gray')
-#    plt.plot(img_xes, img_yes, marker='.')
-#    plt.suptitle('Initial placement of image x ', fontsize = 14)
-#    plt.show()
-
+    # plot of the initial placement of the landmark within the image frame
+    img_xes = image_x[::2]
+    img_yes = image_x[1::2]
+    plt.imshow(image,cmap = 'gray')
+    plt.plot(img_xes, img_yes)#, marker='.')
+    #plt.suptitle('Initial placement of image x ', fontsize = 14)
+    plt.plot([lower_x, upper_x], [lower_y, upper_y], marker='.')
+    plt.savefig('ims_final_images/' +test_image + '_normals.png')   # save the figure to file
+    plt.close()
+    #plt.show()
+    #sys.exit(2)
     # instantiate the approximation of dx
     approx_dx = np.array((0))
     approx_dx = np.tile(approx_dx, len(model_x))
@@ -124,16 +127,18 @@ def image_search(asm_model, image, test_image, threshold=70):
             print('damn, all points are at the same coordinates')
             return (np.array(()), np.array(()))
 
-#        img_xes = image_x[::2]
-#        img_yes = image_x[1::2]
-#        plt.plot(img_xes, img_yes, marker='.')
-#
-#        diff_image_xes = (diff_image_x + image_x)[::2]
-#        diff_image_yes = (diff_image_x + image_x)[1::2]
-#        plt.imshow(image_diff, cmap='gray')
-#        plt.plot(diff_image_xes, diff_image_yes, marker='.')
-#        plt.suptitle('suggested adjustments')
-#        plt.show()
+        img_xes = image_x[::2]
+        img_yes = image_x[1::2]
+        plt.plot(img_xes, img_yes, marker='.')
+
+        diff_image_xes = (diff_image_x + image_x)[::2]
+        diff_image_yes = (diff_image_x + image_x)[1::2]
+        plt.imshow(image_diff, cmap='gray')
+        plt.plot(diff_image_xes, diff_image_yes) #, marker='.')
+        #plt.suptitle('suggested adjustments')
+        plt.savefig('ims_final_images/' + test_image + '_suggested_move.png')   # save the figure to file
+        plt.close()
+        #plt.show()
 
         # align X o be as close to the new points as possible
         # alignment_parameters = a_x, a_y, t_x, t_y
@@ -164,10 +169,12 @@ def image_search(asm_model, image, test_image, threshold=70):
         diff_model_x = scale_and_rotate(y, np.linalg.inv(rotation_matrix)) - model_x
 
         # plot the x + dx
-#        diff_model_xes = (model_x + diff_model_x)[::2]
-#        diff_model_yes = (model_x + diff_model_x)[1::2]
-#        plt.plot(diff_model_xes, diff_model_yes, color='purple')
-#        plt.show()
+        diff_model_xes = (model_x + diff_model_x)[::2]
+        diff_model_yes = (model_x + diff_model_x)[1::2]
+        plt.plot(diff_model_xes, diff_model_yes, color='purple')
+        plt.savefig('ims_final_images/' + test_image + '_suggested_model.png')   # save the figure to file
+        plt.close()
+        #plt.show()
 
         #apply the shape contraints and approximate new model parameter x + dx
         # 0: x + dx ~ x + P*(b+db) <- allowable shape
@@ -198,27 +205,25 @@ def image_search(asm_model, image, test_image, threshold=70):
         # b coordinats in the model space
         approx_dx = np.dot(np.array(principal_axis).transpose(), db)
 
-#        # plot the model
-#        mod_xes = (model_x+approx_dx)[::2]
-#        mod_yes = (model_x+approx_dx)[1::2]
-#        plt.plot(mod_xes, mod_yes, marker='.')
-#        plt.suptitle('Model shape', fontsize = 14)
-#        plt.show()
+        # plot the model
+        mod_xes = (model_x+approx_dx)[::2]
+        mod_yes = (model_x+approx_dx)[1::2]
+        plt.plot(mod_xes, mod_yes)#, marker='.')
+        #plt.suptitle('Model shape', fontsize = 14)
+        plt.savefig('ims_final_images/' + test_image + '_model.png')   # save the figure to file
+        plt.close()
+        #plt.show()
 
 
 
         # store the old suggestion of landmark to test if any change has happend
         image_x_old = image_x
-#        image_x_not = scale_and_rotate(model_x+approx_dx, rotation_matrix) + (t_vector - diff_vector) - diff_vector
-#        # plot the landmarks within the image frame
+        # plot the landmarks within the image frame
 #        plt.imshow(image_diff,cmap = 'gray')
 #        img_xes = image_x_old[::2]
 #        img_yes = image_x_old[1::2]
 #        plt.plot(img_xes, img_yes, marker='o')
-#        img_xes = image_x_not[::2]
-#        img_yes = image_x_not[1::2]
-#        plt.plot(img_xes, img_yes, marker='o', color='purple')
-
+#
         image_x = scale_and_rotate(model_x+approx_dx, rotation_matrix) + t_vector
 
          #find initial translation of model_x
@@ -234,7 +239,7 @@ def image_search(asm_model, image, test_image, threshold=70):
 #            image_x = image_x + t_vector_hack
 ##        #print('diff in image frame: ', sum(abs(image_x-image_x_old)))
 #
-        # further plot of the landmarks within the image frame.
+#        # further plot of the landmarks within the image frame.
 #        img_xes = image_x[::2]
 #        img_yes = image_x[1::2]
 #        plt.plot(img_xes, img_yes, marker='.')
@@ -245,15 +250,16 @@ def image_search(asm_model, image, test_image, threshold=70):
 #        plt.show()
         if sum(abs(image_x-image_x_old)) < 100:
             break
-
+        break 
     # plot the landmarks within the image frame
     plt.imshow(image_diff,cmap = 'gray')
+#    plt.suptitle(test_image, fontsize = 14)
     img_xes = image_x[::2]
     img_yes = image_x[1::2]
-    plt.plot(img_xes, img_yes, marker='.')
-    plt.savefig('ims_final_images/' + test_image + '.png')   # save the figure to file
+    plt.plot(img_xes, img_yes)#, marker='.')
+    plt.savefig('ims_final_images/' + test_image + '_moved.png')   # save the figure to file
     plt.close()
-    plt.show()
+#    plt.show()
 
     return b, (model_x + approx_dx)
 
@@ -516,13 +522,18 @@ def normalize_model(model_x, image, threshold, image_to_show):
     v1 = np.array((upper_x - lower_x, upper_y - lower_y))
     v2 = np.array((mod_upper_x - mod_lower_x, mod_upper_y - mod_lower_y))
 
-#   # plotting of the normals
-#    plt.imshow(image_to_show,cmap = 'gray')
-#    plt.plot([mod_lower_x, mod_upper_x], [mod_lower_y, mod_upper_y], marker='.')
-#    plt.plot([lower_x, upper_x], [lower_y, upper_y], marker='.')
-#    plt.plot(model_x_xes, model_x_yes)
-#    plt.suptitle('Image x ', fontsize = 14)
-#    plt.show()
+   # plotting of the normals
+    plt.imshow(image_to_show,cmap = 'gray')
+    plt.plot(model_x_xes, model_x_yes)
+    plt.plot([mod_lower_x, mod_upper_x], [mod_lower_y, mod_upper_y], marker='.')
+    plt.plot([lower_x, upper_x], [lower_y, upper_y], marker='.')
+    #plt.suptitle(test_image, fontsize = 14)
+    #plt.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0)
+    #plt.tight_layout(pad=0.2, w_pad=0.1, h_pad=1.0)
+    plt.savefig('ims_final_images/' +test_image + '_normals_unaligned.png')   # save the figure to file
+    plt.close()
+    #plt.show()
+    #sys.exit(2)
 
     # find the angle between the two lines / the two shapes
     a_x_tmp, a_y_tmp = angle_between(v2, v1)
@@ -534,8 +545,7 @@ def normalize_model(model_x, image, threshold, image_to_show):
     a_x = scale * a_x_tmp
     a_y = scale * a_y_tmp
 
-    return a_x, a_y, lower_x, lower_y
-
+    return a_x, a_y, lower_x, lower_y, upper_x, upper_y
 
 # Returns the unit vector of the given vector.
 def unit_vector(vector):
@@ -569,45 +579,55 @@ def normalize_image(image):
 ###############################
 
 
-#with open('p_files/test_asm_model_p13.p', 'rb') as f:
-#   asm_model = pickle.load(f)
+with open('p_files/test_asm_model_p13.p', 'rb') as f:
+   asm_model = pickle.load(f)
 
-#print('tests image: ', image)
+##print('tests image: ', image)
+## takket blad
 #image_print = cv2.imread('../data/train/687.jpg', 0)
-#image_print = cv2.imread('../data/test/15252.jpg', 0)
+#plt.imshow(image_print,cmap = 'gray')
+#plt.show()
+##image_print = cv2.imread('../data/test/15252.jpg', 0)
+## langt med bølger
 #image_print = cv2.imread('../data/train/891.jpg', 0)
+#plt.imshow(image_print,cmap = 'gray')
+#plt.show()
+## lille med tre bølger 
 #image_print = cv2.imread('../data/train/27.jpg', 0)
+#plt.imshow(image_print,cmap = 'gray')
+#plt.show()
+## lyst blad
 #image_print = cv2.imread('../data/train/60.jpg', 0)
+#plt.imshow(image_print,cmap = 'gray')
+#plt.show()
+#sys.exit()
+#image_print = parser.get_grayscale('../data/train/', '103527.jpg')
 
 #asm_model = construct(13)
 #with open('p_files/test_asm_model_p13.p', 'wb') as f:
 #    pickle.dump(asm_model, f)
 # get all images
-#test_list = os.listdir('../data/test/')
+test_list = os.listdir('../data/train/')
 
 #max_count = 1 #len(test_list)/2
 
 #i = 1
 
-#test_images = test_list
-#test_images = ['11819.xml']
-
-#for test_image in test_images:
-    # make sure we only test each image one time
-#    if test_image.endswith('.xml'):
-
-#        print(str(i) + ' of ' + str(max_count))
-
-        # remove the ending of the image
-#        test_image = test_image[:-4]
-#        if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
-#        :#or test_image == '68284':
-#            continue
-
-#        print('image: ', test_image)
- #       gray_image = parser.get_grayscale('../data/test/', test_image)
-
-  #      image_features, landmarks = image_search(asm_model, gray_image)
+test_images = test_list
+test_images = ['27.xml', '11388.xml', '40381.xml', '75218.xml', '22805.xml', ]
+#test_images =['108138.xml', '11819.xml']
+for test_image in test_images:
+   # make sure we only test each image one time
+    if test_image.endswith('.xml'):
+       # print(str(i) + ' of ' + str(max_count))
+       # remove the ending of the image
+        test_image = test_image[:-4]
+        #if test_image == '15252' or test_image == '38507' or test_image ==  '108138' or test_image == '73780' or test_image == '24273'\
+        #:#or test_image == '68284':
+        #    continue
+        #print('image: ', test_image)
+        gray_image = parser.get_grayscale('../data/train/', test_image)
+        image_features, landmarks = image_search(asm_model, gray_image, test_image)
 
 
 #image_print = parser.get_grayscale('../data/test/', '103527.jpg')
