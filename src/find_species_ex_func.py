@@ -25,7 +25,7 @@ def find_species_ex(class_id, n, prnt='p'):
                 plt.show()
             else:
                 #fig1 = plt.gcf()
-                plt.savefig('plots/' + prnt + class_id + str(i) + '.png', bbox_inches='tight')   # save the figure to file
+                plt.savefig('plots/' + prnt + class_id + '_' + str(i) + '.png', bbox_inches='tight')   # save the figure to file
                 plt.close()
             i += 1
             if i == int(n):
