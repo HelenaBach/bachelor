@@ -250,10 +250,11 @@ def plot_Recall():
         xes.append(species_table[specie])
         yes.append(ROC_table[specie]['tp_rate'])
         label.append(specie)
-        if float(ROC_table[specie]['tp_rate']) == 0:
-            print(species_table[specie])
+        if float(ROC_table[specie]['tp_rate']) < 0.4 and species_table[specie] > 190:
+            print(specie)
         #if ROC_table[specie]['tp_rate'] == 0:
         #    high_FP.append((specie, ROC_table[specie]['fp']))
+    sys.exit(4)
     #print(len(xes))
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.1)
@@ -295,7 +296,7 @@ def plot_fmeasure():
         label.append(specie)
         if float(ROC_table[specie]['f_measure']) == 0.0:
             really_bad.append((specie, species_table[specie], ROC_table[specie]['f_measure']))
-    
+
     #xes = [item['number'] for item in ROC_table.values()]
     #yes = [item['f_measure'] for item in ROC_table.values()]
     #labels = ROC_table.keys()
@@ -502,7 +503,7 @@ def averages_if_less(seg, p, k, n):
         ROC_table = pickle.load(f)
     with open ('p_files/species_stats.p', 'rb') as f:
         species_table = pickle.load(f)
-    
+
     ROC_table = dict((k, ROC_table[k]) for k in ROC_table.keys() if species_table[k] > n)
     #print(len(ROC_table))
     #sys.exit(2)
@@ -524,7 +525,7 @@ def averages_if_less(seg, p, k, n):
     f_average = f_sum_percentage / len(ROC_table)
 
     #print('Average of F-measure for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', f_average)
-    
+
     tp_sum = sum(float(item['tp']) for item in ROC_table.values())
     all_instances = sum(float(item['number']) for item in ROC_table.values())
     average = tp_sum / all_instances
@@ -546,7 +547,7 @@ def something(class_id):
     sorted_list[:6]
 
 #        for class_id, media_id, landmarks in classified_as_1842:
-#            if class_id in 
+#            if class_id in
 #
 #
 #        image = parser.get_image('../data/test/', media_id)
@@ -588,7 +589,7 @@ def plot_fmeasure():
         label.append(specie)
         if float(ROC_table[specie]['f_measure']) == 0.0:
             really_bad.append((specie, species_table[specie], ROC_table[specie]['f_measure']))
-    
+
     #xes = [item['number'] for item in ROC_table.values()]
     #yes = [item['f_measure'] for item in ROC_table.values()]
     #labels = ROC_table.keys()
@@ -647,12 +648,12 @@ interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','395
 #for_3956 = [('3956', 17), ('3958', 6), ('5474', 4), ('4379', 4), ('1842', 4), ('5537', 2), ('1837', 2)]
 
 #find_species_ex_func.find_species_ex(30040, 2, 'imt_')
-plot_PR()
-plot_fmeasure()
+#plot_PR()
+#plot_fmeasure()
 plot_Recall()
-plot_FP()
+#plot_FP()
 #plot_Precision_inv()
-plot_Precision()
+#plot_Precision()
 
 #from operator import itemgetter
 #something = something(6367)
