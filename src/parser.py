@@ -77,13 +77,13 @@ def get_grayscale(path, file):
 # arguments: the relative path to file directory, file
 # returns  : binary image as a numpy array
 def get_binary(path, file):
-	# should we call otsu every time or store the segmented image?
+
 	if file.endswith('.jpg'):
-	    # indlæs billedet i greyscale (det er det 0 betyder)
+	    # read image in gray scale 
 	    img = cv2.imread(path + file,0)
 	    if img == None:
 	    	print('no image found')
 	    	sys.exit(3)
-	    # gør Otsu agtige ting
+	    # Otsu 
 	    ret,thr =cv2.threshold(img,0,255,cv2.THRESH_OTSU)
 	return thr

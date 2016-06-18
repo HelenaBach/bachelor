@@ -96,6 +96,41 @@ def get_accuracies():
        # number = specie_tup[1]
         print(specie, ' & ', species_table[specie], ' & ', ROC_table[specie]['number'], ' & ', ROC_table[specie]['tp_rate'], ' & ', ROC_table[specie]['precision'], ' & ', ROC_table[specie]['f_measure'], '\\\\')
 
+def create_specie_table():
+    with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
+        ROC_table = pickle.load(f)
+
+    with open ('p_files/species_stats.p', 'rb') as f:
+        species_table = pickle.load(f)
+
+
+    sort_by_specie = sorted(ROC_table.items(), key=lambda item:int(item[0]))
+    # print(sort_by_specie[0])
+
+    sort_by_number_of_train = sorted(species_table.items(), key=lambda item:int(item[1]), reverse=True)
+
+    sort_by_fmeasure = sorted(ROC_table.items(), key=lambda k_v: k_v[1]['f_measure'], reverse=True)
+
+    print('ID & Species & Number in the Trainignset & Number in the Testset & Number of Images \\\\')
+    for specie_tup in sort_by_specie:
+        specie = specie_tup[0]
+       # number = specie_tup[1]
+        print(specie, ' & ', get_specie_name(specie), ' & ', species_table[specie]-ROC_table[specie]['number'], ' & ', ROC_table[specie]['number'], ' & ', species_table[specie], '\\\\')
+
+
+def get_specie_name(class_id):
+    with open ('p_files/image_table.p', 'rb') as f:
+        image_table = pickle.load(f)
+
+    path = '../data/train/'
+
+    for img in image_table:
+        if img['class_id'] == class_id:
+            filename = img['media_id'] + '.xml'
+            specie_name = parser.get_specie_name(path, filename)
+            return specie_name
+
+
 def get_sorted_species():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
         ROC_table = pickle.load(f)
@@ -562,10 +597,6 @@ def something(class_id):
 
     return sorted_list[:7]
 
-for i in ['1973', '54', '3288', '5128', '329', '4074']:
-    find_species_ex_func.find_species_ex(i, 4, 'ims_')
-
-sys.exit(2)
 
 def plot_fmeasure():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -645,7 +676,7 @@ with open ('p_files/species_stats.p', 'rb') as f:
 
 
 
-interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','3956','1973','7305', '4109']
+#interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','3956','1973','7305', '4109']
 # '54', '2689', '6367'
 
 #fór_3958 = {'4838': 3, '8631': 2, '30087': 1, '4719': 1, '3958': 18, '4379': 4, '3956': 7, '14900': 1, '1842': 8, '3955': 3, '326': 1, '5156': 1, '3798': 3, '30728': 1, '4763': 1, '2648': 1, '1837': 9, '3750': 5, '1973': 1}
@@ -655,10 +686,14 @@ interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','395
 
 #find_species_ex_func.find_species_ex(30040, 2, 'imt_')
 
+
+#create_specie_table()
+
+
 #plot_PR()
 #plot_fmeasure()
 #plot_Recall()
-plot_FP()
+#plot_FP()
 #plot_Precision_inv()
 #plot_Precision()
 
@@ -679,15 +714,15 @@ plot_FP()
 #print(gets_classified_as(float('3958')))
 
 
-#i = 0
-#best_i = 0
-#best_accuracy = 0
-#while i < 223:
-#    if averages_if_less(seg, p, k, i)[3] > best_accuracy:
-#        best_accuracy = averages_if_less(seg, p, k, i)[3]
-#        best_i = i
-#        print('new_best: ', best_accuracy)
-#        print('i: ', best_i)
-#    i += 1
-#print('i: ', best_i)
-#print(averages_if_less(seg, p, k, best_i))
+i = 0
+best_i = 0
+best_accuracy = 0
+while i < 300:
+    if averages_if_less(seg, p, k, i)[3] > best_accuracy:
+        best_accuracy = averages_if_less(seg, p, k, i)[3]
+        best_i = i
+        print('new_best: ', best_accuracy)
+        print('i: ', best_i)
+    i += 1
+print('i: ', best_i)
+print(averages_if_less(seg, p, k, best_i))

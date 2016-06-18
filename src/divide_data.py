@@ -77,33 +77,13 @@ def list_duplicates(seq):
   # turn the set into a list (as requested)
   return list( seen_twice )
 
-#def rename_file():
-#	# loop through all data-files
-#	for file in os.listdir('../data/train/'):
-#		if file[:8] == 'leafscan':
-#			os.rename('../data/train/' + file, '../data/train/' + file[8:])
 
 #split_training_test(2)
-print('number of files in leafscan :' +  str(len(os.listdir('../../Data/leafscan/'))))
-print('number of files in train    :' +  str(len(os.listdir('../../Data/train/'))))
-print('number of files in test     :' +  str(len(os.listdir('../../Data/test/'))))
-move_all_files('../../Data/leafscan/', '../../Data/test/', '../../Data/train/', 'data_division.json')
+print('number of files in leafscan :' +  str(len(os.listdir('/Data/leafscan/'))))
+print('number of files in train    :' +  str(len(os.listdir('/Data/train/'))))
+print('number of files in test     :' +  str(len(os.listdir('/Data/test/'))))
+move_all_files('/Data/leafscan/', '/Data/test/', '/Data/train/', 'data_division.json')
 print('after split:')
-print('number of files in leafscan :' +  str(len(os.listdir('../../Data/leafscan/'))))
-print('number of files in train    :' +  str(len(os.listdir('../../Data/train/'))))
-print('number of files in test     :' +  str(len(os.listdir('../../Data/test/'))))
-
-#number of items in train ( species number >2): 10037
-#number of items in test ( species number >2): 2613
-# all = 12650 * 2 = 25300
-
-#number of files in leafscan :25652
-#number of files in train    :0
-#number of files in test     :0
-#number of duplicates in test set: 0
-#number of duplicates in train set: 0
-#after split:
-#number of files in leafscan :352
-#number of files in train    :20074
-#number of files in test     :5226
-# 20074 + 5226 = 25300 hurra! :D
+print('number of files in leafscan :' +  str(len(os.listdir('/Data/leafscan/'))))
+print('number of files in train    :' +  str(len(os.listdir('/Data/train/'))))
+print('number of files in test     :' +  str(len(os.listdir('/Data/test/'))))
