@@ -213,9 +213,9 @@ def plot_PR():
     #plt.suptitle('PR graph ', fontsize = 14)
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
-    plt.savefig('plots/PR_' + str(seg) + '.png')   # save the figure to file
-    plt.close()
-    #plt.show()
+    #plt.savefig('plots/PR_' + str(seg) + '.png')   # save the figure to file
+    #plt.close()
+    plt.show()
 
 def plot_Precision():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -285,10 +285,11 @@ def plot_Recall():
         xes.append(species_table[specie])
         yes.append(ROC_table[specie]['tp_rate'])
         label.append(specie)
-        if float(ROC_table[specie]['tp_rate']) == 0:
-            print(species_table[specie])
+        if float(ROC_table[specie]['tp_rate']) < 0.4 and species_table[specie] > 190:
+            print(specie)
         #if ROC_table[specie]['tp_rate'] == 0:
         #    high_FP.append((specie, ROC_table[specie]['fp']))
+    sys.exit(4)
     #print(len(xes))
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.1)
@@ -305,9 +306,9 @@ def plot_Recall():
     #plt.suptitle('Recall', fontsize = 14)
     ax.set_xlabel('Number of Instances')
     ax.set_ylabel('Recall')
-    plt.savefig('plots/recall_' + str(seg) + '.png')   # save the figure to file
-    plt.close()
-    #plt.show()
+    #plt.savefig('plots/recall_' + str(seg) + '.png')   # save the figure to file
+    #plt.close()
+    plt.show()
 
 def plot_fmeasure():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -330,7 +331,7 @@ def plot_fmeasure():
         label.append(specie)
         if float(ROC_table[specie]['f_measure']) == 0.0:
             really_bad.append((specie, species_table[specie], ROC_table[specie]['f_measure']))
-    
+
     #xes = [item['number'] for item in ROC_table.values()]
     #yes = [item['f_measure'] for item in ROC_table.values()]
     #labels = ROC_table.keys()
@@ -356,9 +357,9 @@ def plot_fmeasure():
     ax.set_ylabel('F-measure')
     minor_ticks = np.arange(0, 350, 10)
     ax.set_xticks(minor_ticks, minor=True)
-    plt.savefig('plots/fmeasure_' + str(seg) + '.png')   # save the figure to file
-    plt.close()
-    #plt.show()
+    #plt.savefig('plots/fmeasure_' + str(seg) + '.png')   # save the figure to file
+    #plt.close()
+    plt.show()
 
 
 def plot_FP():
@@ -404,9 +405,9 @@ def plot_FP():
 #    plt.suptitle('False Positive', fontsize = 14)
     ax.set_xlabel('Number of Instances')
     ax.set_ylabel('Number of Instances Incorrectly Labeled')
-    plt.savefig('plots/fp_' + str(seg) + '.png')   # save the figure to file
-    plt.close()
-    #plt.show()
+    #plt.savefig('plots/fp_' + str(seg) + '.png')   # save the figure to file
+    #plt.close()
+    plt.show()
 
 
  #FN/NUMBER = 1-RECALL -> USE THIS INSTEAD!
@@ -539,7 +540,7 @@ def averages_if_less(seg, p, k, n):
         ROC_table = pickle.load(f)
     with open ('p_files/species_stats.p', 'rb') as f:
         species_table = pickle.load(f)
-    
+
     ROC_table = dict((k, ROC_table[k]) for k in ROC_table.keys() if species_table[k] > n)
     #print(len(ROC_table))
     #sys.exit(2)
@@ -561,7 +562,7 @@ def averages_if_less(seg, p, k, n):
     f_average = f_sum_percentage / len(ROC_table)
 
     #print('Average of F-measure for ', seg, 'with ', p, ' PCs and ', k, ' neighbours ', f_average)
-    
+
     tp_sum = sum(float(item['tp']) for item in ROC_table.values())
     all_instances = sum(float(item['number']) for item in ROC_table.values())
     average = tp_sum / all_instances
@@ -583,7 +584,7 @@ def something(class_id):
     sorted_list[:6]
 
 #        for class_id, media_id, landmarks in classified_as_1842:
-#            if class_id in 
+#            if class_id in
 #
 #
 #        image = parser.get_image('../data/test/', media_id)
@@ -597,6 +598,10 @@ def something(class_id):
 
     return sorted_list[:7]
 
+for i in ['1973', '54', '3288', '5128', '329', '4074']:
+    find_species_ex_func.find_species_ex(i, 4, 'ims_')
+
+sys.exit(2)
 
 def plot_fmeasure():
     with open ('p_files/ROC_table_' + str(seg) + '_pc' + str(p) + '_k' + str(k) + '.p', 'rb') as f:
@@ -676,7 +681,7 @@ with open ('p_files/species_stats.p', 'rb') as f:
 
 
 
-#interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','3956','1973','7305', '4109']
+interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','3956','1973','7305', '4109']
 # '54', '2689', '6367'
 
 #fór_3958 = {'4838': 3, '8631': 2, '30087': 1, '4719': 1, '3958': 18, '4379': 4, '3956': 7, '14900': 1, '1842': 8, '3955': 3, '326': 1, '5156': 1, '3798': 3, '30728': 1, '4763': 1, '2648': 1, '1837': 9, '3750': 5, '1973': 1}
@@ -692,7 +697,7 @@ with open ('p_files/species_stats.p', 'rb') as f:
 
 #plot_PR()
 #plot_fmeasure()
-#plot_Recall()
+plot_Recall()
 #plot_FP()
 #plot_Precision_inv()
 #plot_Precision()
@@ -714,15 +719,15 @@ with open ('p_files/species_stats.p', 'rb') as f:
 #print(gets_classified_as(float('3958')))
 
 
-i = 0
-best_i = 0
-best_accuracy = 0
-while i < 300:
-    if averages_if_less(seg, p, k, i)[3] > best_accuracy:
-        best_accuracy = averages_if_less(seg, p, k, i)[3]
-        best_i = i
-        print('new_best: ', best_accuracy)
-        print('i: ', best_i)
-    i += 1
-print('i: ', best_i)
-print(averages_if_less(seg, p, k, best_i))
+#i = 0
+#best_i = 0
+#best_accuracy = 0
+#while i < 223:
+#    if averages_if_less(seg, p, k, i)[3] > best_accuracy:
+#        best_accuracy = averages_if_less(seg, p, k, i)[3]
+#        best_i = i
+#        print('new_best: ', best_accuracy)
+#        print('i: ', best_i)
+#    i += 1
+#print('i: ', best_i)
+#print(averages_if_less(seg, p, k, best_i))
