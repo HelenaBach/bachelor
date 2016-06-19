@@ -589,7 +589,7 @@ def plot_fmeasure():
         label.append(specie)
         if float(ROC_table[specie]['f_measure']) == 0.0:
             really_bad.append((specie, species_table[specie], ROC_table[specie]['f_measure']))
-    
+
     #xes = [item['number'] for item in ROC_table.values()]
     #yes = [item['f_measure'] for item in ROC_table.values()]
     #labels = ROC_table.keys()
@@ -647,19 +647,19 @@ interesting = ['30249', '3958', '1842', '3288','329', '5602','14872','4379','395
 #for_3958 = {'3958': 18, '4379': 4, '3956': 7, '1842': 8, '1837': 9, '3750': 5}
 #for_3956 = [('3956', 17), ('3958', 6), ('5474', 4), ('4379', 4), ('1842', 4), ('5537', 2), ('1837', 2)]
 
-#find_species_ex_func.find_species_ex(30040, 2, 'imt_')
+find_species_ex_func.find_species_ex('30040', 4)
 
 #plot_PR()
 #plot_fmeasure()
-plot_Recall()
+#plot_Recall()
 #plot_FP()
 #plot_Precision_inv()
 #plot_Precision()
 
 #from operator import itemgetter
-#something = something(6367)
+#something = something(3288)
 #print(something)
-#
+
 #make_printable(something)
 
 

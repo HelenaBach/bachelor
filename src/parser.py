@@ -23,7 +23,7 @@ def init_image(path, file):
 	# create image fields
 	media_id       = root.find('MediaId').text
 	class_id       = root.find('ClassId').text
-	landmarks      = np.array([]) 
+	landmarks      = np.array([])
 	feature_vector = np.array([])
 	# instantiate image fields
 	img_struct['media_id']       = media_id
