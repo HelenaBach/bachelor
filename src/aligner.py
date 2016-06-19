@@ -227,8 +227,6 @@ def normalize_mean_init(mean_shape):
     mean_x = np.mean(xes)
     mean_y = np.mean(yes)
 
-    plt.plot(xes,yes)
-    plt.show()
 
     mean_vector = np.tile(np.array((mean_x,mean_y)), len(xes))
     # Mean center the mean shape
@@ -252,12 +250,6 @@ def normalize_mean_init(mean_shape):
     xes = np.append(xes, norm_mean[0])
     yes = norm_mean[1::2]
     yes = np.append(yes, norm_mean[1])
-    plt.plot(xes,yes, marker='.')
-    plt.suptitle('Mean Shape init', fontsize = 14)
-    #axes = plt.gca()
-    #axes.set_xlim([0,675])
-    #axes.set_ylim([0,900])
-    plt.show()
 
     return norm_mean
 
@@ -266,12 +258,6 @@ def normalize_mean(mean, default, var_matrix):
     xes = np.append(xes, mean[0])
     yes = mean[1::2]
     yes = np.append(yes, mean[1])
-    plt.plot(xes,yes, marker='.')
-    plt.suptitle('Mean Shape before', fontsize = 14)
-    #axes = plt.gca()
-    #axes.set_xlim([0,675])
-    #axes.set_ylim([0,900])
-    plt.show()
 
     x = solve_x(default, mean, var_matrix)
     norm_mean = align_pair(mean, x)
@@ -280,12 +266,6 @@ def normalize_mean(mean, default, var_matrix):
     xes = np.append(xes, norm_mean[0])
     yes = norm_mean[1::2]
     yes = np.append(yes, norm_mean[1])
-    plt.plot(xes,yes, marker='.')
-    plt.suptitle('Mean Shape after', fontsize = 14)
-    #axes = plt.gca()
-    #axes.set_xlim([0,675])
-    #axes.set_ylim([0,900])
-    plt.show()
 
     return norm_mean
 

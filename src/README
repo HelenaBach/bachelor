@@ -1,0 +1,43 @@
+This folder consist the sourcefiles of the model. The model can both be trained and tested.
+
+The model can either be run on the provided pickle files, or can be retrained using assuming the data - i.e the images data set of LEAFCLEF is downloaded and stored in a folder named 'Data'. Be aware that the model takes around 15 hours to retrain.
+
+RETRAINING THE MODEL:
+	Initially two empty folders, the data needs to be split into a test set and a training set. The script to divide the data is provided in divide_data.py and can be run using the command:
+
+	python3 divide_data.py
+
+	After the data is split the pre_align.py script could be run using the command: 
+
+	pyrhon3 pre_align.py
+
+	This will create pickle files:
+	image_table.p
+	mean_shape.p
+	varr_matrix.p
+
+PROCESS THE TEST DATA: 
+	After the aligning of the training set, main.py can be run. 
+	Two different functionalities is found in main, one for creating the test tables - e.i the processing of the test data, or one can simply use main to classify.
+	If create_tables() is run, test tables matching the tables created in the TRAINING phase is created, or one could simply use the handed-out tables provided in the p_files folder. run the command: 
+
+	python3 main.py 'path/to/test/data' 'ims' 'ct'
+
+	to classify using image search of the model and creating the tables  
+
+CLASSIFY:
+	To simply classify use, the provided main.py file. three arguments should be parsed: the path of the training data, which method sould be used when classifying 'ims' if image search sould be used and 'otsu' if the otsu segmentation should be used, and the third argument should be 'pf' to indicate that the provided pickle files should be used. run below command to classify the using otsu and with the provided pickle files: 
+
+	python3 main.py 'path/to/test/data' 'otsu' 'fp'
+
+	which will print the average accuracy using 13, 28, 50 and 80 respectively. Further ROC_tables are created to further analyse the results. These will not be explained further.
+
+
+MODULES PROVIDED:
+	segmentation.py
+	aligner.py
+	asm.py
+	knn.py
+	pca.py
+	parser.py
+	table.py

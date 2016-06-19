@@ -23,9 +23,6 @@ def fit(data, mean, dim):
 		eigenvalue = k[i]**2/len(U)
 		eigen_pair.append((eigenvalue, eigenvector_matrix[i]))
 
-	# sort according to the eigenvalue (in place)
-#	eigen_pair.sort(key=lambda tup: tup[0], reverse=True)
-
 	# all variance is explained by sum of eigenvalues
 	total_variance = sum(i for i, j in eigen_pair)
 	if dim < 1:

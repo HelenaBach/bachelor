@@ -50,11 +50,6 @@ def getResponse(neighbors):
         else:
             classVotes[response] = 1/dist
         sortedVotes = sorted(classVotes.items(), key=lambda item:item[1], reverse=True)
-	# the number of votes that this classification got
-	#votes = sortedVotes[0][1]
-
-	# the classification is found by:
-	# sortedVotes[0][0]
 
 	# return the whole list of sorted votes
     return sortedVotes
